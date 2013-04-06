@@ -16,17 +16,6 @@
         </div><!--end span10 offset1!-->
       </div><!--end row fluid!-->
       </div><!--end menu!-->
-      <div class="slider">
-        <div class="row-fluid">
-          <div class="span12">
-            <div class="row-fluid">
-              <div class="span10 offset1">
-                <p>slider here</p>
-              </div>
-            </div>
-          </div>
-        </div><!--end row fluid!-->
-      </div><!--end class slider!-->
 
       <div class="features">
         <div class="row-fluid">
