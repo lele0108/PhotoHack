@@ -19,16 +19,23 @@ body p, h1, h2, h3, h4, h5 {
 }
 
 .features {
-	margin-top:10px;
-
 }
 
 .features h1 {
 	text-align: center;
 	font-weight:100;
-	margin-bottom:50px;
 }
 
 .features h2 {
 	font-weight:400;
+}
+
+#topic {
+	padding-top:30px;
+	padding-bottom:30px;
+}
+
+#features1 {
+	background-color:#e7e7e7;
+	padding-top:50px;
 }
