@@ -1,3 +1,7 @@
+body {
+	padding: 0px;
+}
+
 body p, h1, h2, h3, h4, h5 {
 	font-family: 'Open Sans', sans-serif;
 }
@@ -10,12 +14,23 @@ body p, h1, h2, h3, h4, h5 {
 
 .menu p {
 	margin-top: 50px;
+	word-spacing:30px;
+}
+
+.menu a {
+	color:black;
+}
+
+.menu a:hover {
+	color:#777;
+	text-decoration:none;
 }
 
 .slider {
 	background-color:gray;
 	position:relative;
 	height:400px;
+	padding-top: 30px;
 }
 
 .features {
@@ -37,12 +52,29 @@ body p, h1, h2, h3, h4, h5 {
 
 #features1 {
 	background-color:#e7e7e7;
-	padding-top:50px;
-	padding-bottom:50px;
+	padding-top:80px;
+	padding-bottom:80px;
 }
 
 #features2 {
 	background-color:white;
-	padding-top:50px;
-	padding-bottom:50px;
+	padding-top:80px;
+	padding-bottom:80px;
+}
+
+.signup {
+	padding: 100px 0px 100px 0px;
+}
+
+.signup h1 {
+	font-weight:100;
+}
+
+.footer {
+	background-color: #e7e7e7;
+	padding:25px 0px 5px 0px;
+}
+
+.footer p {
+	color:black;
 }
