@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bootstrap 101 Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script type="text/javascript">
+    	function openFilePicker(){    		
+    		filepicker.setKey('AK8NQWurTGqXdwjpiHQ3Qz');
+    		filepicker.pick({
+    		    mimetypes: ['image/*', 'text/plain'],
+    		    container: 'window',
+    		    services:['COMPUTER', 'FACEBOOK', 'GMAIL'],
+    		  },
+    		  function(FPFile){
+    		    console.log(JSON.stringify(FPFile));
+    		  },
+    		  function(FPError){
+    		    console.log(FPError.toString());
+    		  }
+    		);
+    		/*
+	    		BOX
+				COMPUTER
+				DROPBOX
+				EVERNOTE
+				FACEBOOK
+				FLICKR
+				FTP
+				GITHUB
+				GOOGLE_DRIVE
+				PICASA
+				WEBDAV
+	    		
+				GMAIL
+				IMAGE_SEARCH
+				INSTAGRAM
+				URL
+				VIDEO
+				WEBCAM
+    		*/
+    	}
+    </script>
+  </head>
+  <body>
+    <h1>Filepicker</h1>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    
+   	<div onclick="openFilePicker()">Open Filepicker</div>
+    
+    <script type="text/javascript" src="//api.filepicker.io/v1/filepicker.js"></script>    
+  </body>
+</html>
