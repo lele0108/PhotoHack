@@ -33,6 +33,22 @@ body p, h1, h2, h3, h4, h5 {
 	padding-top: 30px;
 }
 
+.upload {
+	background-color:gray;
+	position:relative;
+	height:100%;
+	padding-top: 50px;
+	padding-bottom:50px;
+}
+
+.upload img {
+	text-align:center;
+	border-radius: 150px;
+	-webkit-border-radius: 150px;
+	-moz-border-radius: 150px;
+	margin-bottom: 10px;
+}
+
 .features {
 }
 

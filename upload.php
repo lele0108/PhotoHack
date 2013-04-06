@@ -16,66 +16,55 @@
         </div><!--end span10 offset1!-->
       </div><!--end row fluid!-->
       </div><!--end menu!-->
-
-      <div class="features">
+      <div class="upload">
         <div class="row-fluid">
-          <div id="topic">
-          <h1>Awesome Features</h1>
+          <div class="span12">
+            <div class="row-fluid">
+              <div class="span10 offset1">
+                <div class="row-fluid">
+
+                  <div class="span4">
+                    <center><img src="http://placehold.it/150x150"></center>
+                    <p class="text-center">Pick image you want</p>
+                  </div>
+
+                  <div class="span4">
+                    <center><img src="http://placehold.it/150x150"></center>
+                    <p class="text-center">Edit to what you want</p>
+                  </div>
+
+                  <div class="span4">
+                    <center><img src="http://placehold.it/150x150"></center>
+                    <p class="text-center">Play!</p>
+                  </div>
+
+                </div>
+                  <br><br>
+                  <!-- Button to trigger modal -->
+                  <center><a href="#myModal" role="button" class="btn" data-toggle="modal">Pick Image</a></center>
+                   
+                  <!-- Modal -->
+                  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                      <h3 id="myModalLabel">Getting a Image</h3>
+                    </div>
+                    <div class="modal-body">
+                      <p>One fine body…</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                      <button class="btn btn-primary">Save changes</button>
+                    </div> <!-- end modal !-->
+                  </div>
+              </div>
+            </div>
           </div>
         </div><!--end row fluid!-->
-        <div id="features1">
-        <div class="row-fluid">
-          <div class="span4 offset1">
-            <h2>Custom Mazes</h2>
-            <p>Upload your images and we will generate stunning mazes for you to solve with your friends. The image will be the basis for the image and it is a ton of fun to play with friends when your bored.</p>
-          </div><!--end span10 offset1!-->
+      </div><!--end class slider!-->
 
-          <div class="span4 offset2">
-          <img src="http://placehold.it/350x150">
-          </div>
 
-          </div><!--row fluid!-->
-          </div>
 
-        <div id="features2">
-        <div class="row-fluid">
-          <div class="span4 offset1">
-             <img src="http://placehold.it/350x150">
-          </div><!--end span10 offset1!-->
-
-          <div class="span4 offset2">
-            <h2>Feature One</h2>
-            <p>Kitty ipsum dolor sit amet, bat chuf eat kittens meow sunbathe, lay down in your way eat the grass toss the mousie claw purr. Stuck in a tree stretching puking attack, hiss sleep in the sink give me fish run sniff.</p>
-          </div>
-
-          </div><!--row fluid!-->
-        </div>
-
-        <div id="features1">
-        <div class="row-fluid">
-          <div class="span4 offset1">
-            <h2>Custom Mazes</h2>
-            <p>Upload your images and we will generate stunning mazes for you to solve with your friends. The image will be the basis for the image and it is a ton of fun to play with friends when your bored.</p>
-          </div><!--end span10 offset1!-->
-
-          <div class="span4 offset2">
-          <img src="http://placehold.it/350x150">
-          </div>
-
-          </div><!--row fluid!-->
-          </div>
-
-        </div>
-   </div><!--end features!-->
-
-    <div class="signup">
-      <div class="row-fluid">
-        <div class="span10 offset1">
-          <h1 class="text-center">Want to play? Let's get started!</h1><br>
-          <center><button class="btn-large">Get Started</button></center>
-        </div>
-      </div>
-    </div>
 <?php
    include_once "footer.php";
 ?>
