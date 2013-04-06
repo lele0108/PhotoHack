@@ -38,4 +38,11 @@ body p, h1, h2, h3, h4, h5 {
 #features1 {
 	background-color:#e7e7e7;
 	padding-top:50px;
+	padding-bottom:50px;
+}
+
+#feature2 {
+	background-color:white;
+	padding-top:50px;
+	
 }
