@@ -7,7 +7,7 @@
         <div class="span10 offset1">
         <div class="row-fluid">
           <div class="span3">
-            <p>iMaze</p>
+            <img src="img/logo.png" width="50%" height="50%">
           </div>
           <div class="span3 offset6">
             <p class="text-right"><a href="index.php">HELLO</a> <a href="upload.php">GENERATE</a> <a href="#" style="text-decoration:underline">ABOUT</a></p>

@@ -27,6 +27,10 @@ body p, h1, h2, h3, h4, h5 {
 	word-spacing:30px;
 }
 
+.menu img {
+	margin-top: 45px;
+}
+
 .menu a {
 	color:black;
 }
