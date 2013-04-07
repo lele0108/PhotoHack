@@ -66,16 +66,21 @@ function bitmap(m) {
 }
 
 function requestMultiplayerGame(url, maze, scale){
-	var rand = function() {
-	    return Math.random().toString(36).substr(2);
-	};
-	var token = function() {
-	    return rand() + rand();
-	};
-	var randToken = token();
+    var d = new Date();
+	var n = d.getTime();
+	var randToken = n;
 	var myDataRef = new Firebase('https://z.firebaseio.com/'+randToken);
-	myDataRef.push({url: url, maze: JSON.stringify(maze), scale: scale});
+	myDataRef.set({url: url, maze: JSON.stringify(maze), scale: scale});
 	return randToken;
+}
+
+function loadMaze(token){
+	var myDataRef = new Firebase('https://z.firebaseio.com/'+token);
+	myDataRef.on('child_added', function (snapshot) {
+	   var message = JSON.parse(snapshot.val());
+	});
+	var obj = jQuery.parseJSON(message);
+	return obj;
 }
 
 function scale(bitmap, scale) {
