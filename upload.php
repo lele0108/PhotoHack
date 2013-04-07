@@ -42,7 +42,7 @@
 
                   <div class="span4">
                     <center><img src="img/photo2.png" style="border-radius:0px"></center>
-                    <p class="text-center">3. Play!</p>c
+                    <p class="text-center">3. Play!</p>
                   </div>
 
                 </div>
