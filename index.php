@@ -70,7 +70,7 @@
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
-          <img src="/img/gamewithfriends.jpg">
+          <img src="/img/gamewithfriend.jpg">
           </div>
 
           </div><!--row fluid!-->
