@@ -11,7 +11,7 @@
             <img src="img/logo.png" width="50%" height="50%">
           </div>
           <div class="span9">
-            <p class="text-right"><a href="index.php">HELLO</a> <a href="upload.php">GENERATE</a> <a href="#" style="text-decoration:underline">ABOUT</a></p>
+            <p class="text-right"><a href="index.php">HELLO</a> <a href="upload.php">GENERATE</a> <a href="#"><b>ABOUT</b></a></p>
           </div>
         </div>
         </div><!--end span10 offset1!-->

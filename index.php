@@ -7,15 +7,26 @@
         <div class="span10 offset1">
         <div class="row-fluid">
           <div class="span3">
+            <div class="hidden-phone">
             <img src="img/logo.png" width="50%" height="50%">
+            </div>
+            <div class="visible-phone">
+              <center><img src="img/logo.png" width="50%" height="50%"></center>
+            </div>
           </div>
           <div class="span3 offset6">
-            <p class="text-right"><a href="#" style="text-decoration:underline">HELLO</a> <a href="upload.php">GENERATE</a> <a href="about.php">ABOUT</a></p>
+          <div class="hidden-phone">
+            <p class="text-right"><a href="#"><b>HELLO</b></a> <a href="upload.php">GENERATE</a> <a href="about.php">ABOUT</a></p>
+          </div>
+          <div class="visible-phone">
+            <p class="text-center"><a href="#"><b>HELLO</b></a> <a href="upload.php">GENERATE</a> <a href="about.php">ABOUT</a></p>
+          </div>
           </div>
         </div>
         </div><!--end span10 offset1!-->
       </div><!--end row fluid!-->
       </div><!--end menu!-->
+      <div class="hidden-phone">
       <div class="slider">
         <div class="row-fluid">
           <div class="span12">
@@ -27,10 +38,12 @@
           </div>
         </div><!--end row fluid!-->
       </div><!--end class slider!-->
+      </div><!--end hidden phone!-->
 
       <div class="features">
         <div class="row-fluid">
           <div id="topic">
+          <div class="visibile phone"><br><br></div>
           <h1>Awesome Features</h1>
           </div>
         </div><!--end row fluid!-->
@@ -70,7 +83,7 @@
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
-          <img src="/img/gamewithfriend.jpg">
+          <img src="/img/gamewithfriends.jpg">
           </div>
 
           </div><!--row fluid!-->

@@ -58,8 +58,8 @@ function bitmap(m) {
 						line[k]= 1;
 				else
 					line[k]= 0;
-		if (0 == j) line[1] = 0;
-		if (m.x*2-1 == j) line[2*m.y]= 0;
+		//if (0 == j) line[1] = 0;
+		//if (m.x*2-1 == j) line[2*m.y]= 0;
 		map.push(line);
 	}
 	return map;
@@ -162,8 +162,9 @@ function _pointInArray(point, array) {
 
 function canMove(ctx, x, y, scale, myColor) {
   var c = ctx.getImageData(x*scale, y*scale, 1, 1).data;
+  var finished = !_isColor(c, myColor) && !_isColor(c, [0,0,0,0]) && !_isColor(c, [255,255,255,255]);
   // can move on white squere
-  if (_isColor(c, [255,255,255,255])) {
+  if (_isColor(c, [255,255,255,255]) || finished) {
     // is neighbour pixel of myColour
     var eq = 0;
     var neighbrou, fillAlso;
@@ -228,9 +229,14 @@ function canMove(ctx, x, y, scale, myColor) {
       else
         fillAlso = [x-1, y];
     }
-    return { count:eq, closest:neighbrou, fillAlso:fillAlso };
+    
+    // clear fillAlso if neighbrou was found
+    if (neighbrou) {
+      fillAlso = null;
+    }
+    return { count:eq, closest:neighbrou, fillAlso:fillAlso, finished:finished };
   }
-  return 0;
+  return { count:0, closest:null, fillAlso:null, finished:false };
 }
 
 function pixelsToRemove(ctx, fromPixel, toPixel, scale) {
