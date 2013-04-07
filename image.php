@@ -44,10 +44,13 @@
     });
   //-->
   </script>
+
 <body style="text-align: center">
-  
- 
+
+    <div id ="mazeresize" role="mazeresize">
     <canvas id="maze" width="100" height="100"></canvas>
+    </div>
+
   <div style="display: none;">
     <img id="user-image" src="<?php echo $_GET['mazeImage']; ?>" />
   </div>

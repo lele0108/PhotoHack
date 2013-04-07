@@ -283,6 +283,14 @@ iframe {
 	margin: 30px 0px 30px 0px;
 }
 
+#mazeresize {
+    display:block;
+    width:100%;
+    padding:0px;
+    height:400px;
+    background:gray;
+} 
+
 .options {
 	margin: 30px 0px 30px 0px;
 }
