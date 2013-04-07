@@ -23,6 +23,7 @@
 
             // Get my favorites
             _500px.api('/photos', { feature: 'user_favorites', user_id: me.id }, function (response) {
+            	console.log(response);
               if (response.data.photos.length == 0) {
                 alert('You have no favorite photos.');
               } else {

@@ -6,58 +6,48 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
   </head>
   <body>
-    <script>        
-
-	function show(){
-		_500px.init({
-	    	sdk_key: '9920bb2b69c7f071b25edeb643cc70d9c98373cc'
-	    });
-
-		_500px.api('/users', function (response) {
-	          var me = response.data.user;
-			  
-	          // Get my favorites
-	          _500px.api('/photos', { feature: 'user_favorites', user_id: me.id }, function (response) {
-	            if (response.data.photos.length == 0) {
-	              alert('You have no favorite photos.');
-	            } else {
-	              $.each(response.data.photos, function () {
-	                $('#logged_in').append('<img src="' + this.image_url + '" />');
-	              });
-	            }
-	          });
-	        });
-	}
+    <script>
+      function searchNext(){
+        $("#logged_in").empty();
+        
+        _500px.api('/users', function (response) {
+            var me = response.data.user;
+            // Get my favorites
+            _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 5, page: $("#page").val(), user_id: me.id }, function (response) {
+                console.log(response);
+                $.each(response.data.photos, function () {
+                  $('#logged_in').append('<img src="' + this.image_url + '" />');
+                });
+            });
+          });
+          $("#page").val(parseInt($("#page").val())+1); 
+      }
     
-    $(function () {
+      $(function () {
         _500px.init({
           sdk_key: '9920bb2b69c7f071b25edeb643cc70d9c98373cc'
         });
-
-        // When the user logs in we will pull their favorite photos
+          
+// When the user logs in we will pull their favorite photos
         _500px.on('authorization_obtained', function () {
           $('#not_logged_in').hide();
           $('#logged_in').show();
 
-        });
-
-     // Get my user id
-        _500px.api('/users', function (response) {
-          var me = response.data.user;
-		  
-          // Get my favorites
-          _500px.api('/photos', { feature: 'user_favorites', user_id: me.id }, function (response) {
-            if (response.data.photos.length == 0) {
-              alert('You have no favorite photos.');
-            } else {
-              $.each(response.data.photos, function () {
-                $('#logged_in').append('<img src="' + this.image_url + '" />');
-              });
-            }
+          // Get my user id
+          _500px.api('/users', function (response) {
+            var me = response.data.user;
+            // Get my favorites
+            _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 5, page: $("#page").val(), user_id: me.id }, function (response) {
+                console.log(response);
+                $.each(response.data.photos, function () {
+                  $('#logged_in').append('<img src="' + this.image_url + '" />');
+                });
+                $("#page").val(parseInt($("#page").val())+1);
+            });
           });
         });
-        
-        _500px.on('logout', function () {
+
+       _500px.on('logout', function () {
           $('#not_logged_in').show();
           $('#logged_in').hide();
           $('#logged_in').html('');
@@ -69,15 +59,23 @@
         // If the user clicks the login link, log them in
         $('#login').click(_500px.login);
       });
-        </script>
+    </script>
 
     <h1>Your 500px favorite photos</h1>
 
-    <div id="show" onclick="show()">Show photos</div>
-        <div id="not_logged_in">
+    <?php echo $_GET['term']; ?>
+
+    <form name="search" id="search">
+      <input type="text" name="term">
+      <button type="submit">Search</button>
+    </form>
+    <div id="not_logged_in">
       <a href="#" id="login">Login to 500px</a>
     </div>
     <div id="logged_in" style="display: none;">
     </div>
+    <div id="" style="" onclick="searchNext()">Search Next
+    </div>
+    <input id="page" type="hidden" name="page" value="1">
   </body>
 </html>

@@ -58,7 +58,28 @@
             </p>
           </div><!--end span10 offset1!-->
 
+          
           </div><!--row fluid!-->
+          <div id="features1">
+        <div class="row-fluid">
+          <div class="span4 offset1">
+            <h2>API's</h2>
+            <p>In project Maze we incorporate several photo centric api's. We use the Filepicker to 
+              allow our users to use their own image for their maze background. We incorporate 500px api as a 
+              primary source for pulling stuning public photos. The Aviary api is used twice in iMaze first we use the Aviary filter api to 
+              allow our users to edit their uploaded photos. We also use the Aviary sever side api, when a user fills out the maze the path
+               in which he goes is a less saturated version of the original image.</p>
+          </div><!--end span10 offset1!-->
+
+          <div class="span4 offset2">
+          <img src="/img/banner.jpg">
+          </div>
+
+          </div><!--row fluid!-->
+          </div>
+
+        </div>
+   </div><!--end features!-->
           </div>
 
 
