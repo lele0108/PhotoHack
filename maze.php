@@ -46,12 +46,11 @@
             </div>
           </div>
         </div><!--end row fluid!-->
-
+        <br>
       <div class="maze">
         <div class="row-fluid">
           <div class="span12">
             <div class="row-fluid">
-
               <div class="twoplayer">
                 <div class="span5 offset1">
                     <p>Place player 1 maze right here</p>
