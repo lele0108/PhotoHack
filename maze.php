@@ -29,13 +29,6 @@
         <div class="row">
           <div class="span10 offset1">
             <h1 class="text-center">Current Maze Title</h1>
-          </div>
-        </div>
-      </div>
-
-      <div class="info">
-        <div class="row">
-          <div class="span10 offset1">
             <p class="text-center">Timer: 0:50</p>
           </div>
         </div>
@@ -48,12 +41,36 @@
               <div class="span10 offset1">
                   <p>Place maze right here</p>
                   <br><br>              
-                  </div>
+              </div>
               </div>
             </div>
           </div>
         </div><!--end row fluid!-->
-      </div><!--end class slider!-->
+
+      <div class="maze">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="row-fluid">
+
+              <div class="twoplayer">
+                <div class="span5 offset1">
+                    <p>Place player 1 maze right here</p>
+                    <br><br>              
+                </div>
+              </div>
+
+              <div class="twoplayer">
+                <div class="span5 offset1">
+                    <p>Place player 2 maze right here</p>
+                    <br><br>              
+                </div>
+              </div>
+
+              </div>
+            </div>
+          </div>
+        </div><!--end row fluid!-->
+
 
 
 <?php
