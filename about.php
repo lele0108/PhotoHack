@@ -61,22 +61,43 @@
 
           
           </div><!--row fluid!-->
-          <div id="features1">
-        <div class="row-fluid">
-          <div class="span4 offset1">
-            <h2>API's</h2>
-            <p>In project Maze we incorporate several photo centric api's. We use the Filepicker to 
-              allow our users to use their own image for their maze background. We incorporate 500px api as a 
-              primary source for pulling stuning public photos. The Aviary api is used twice in iMaze first we use the Aviary filter api to 
-              allow our users to edit their uploaded photos. We also use the Aviary sever side api, when a user fills out the maze the path
-               in which he goes is a less saturated version of the original image.</p>
-          </div><!--end span10 offset1!-->
+         <div class="row-fluid">
+          <div class="span12">
 
-          <div class="span4 offset2">
-          <img src="/img/banner.jpg">
+            <div id="titleabout">
+          <h1>API Usage</h1>
+          </div> 
+          </div>
           </div>
 
-          </div><!--row fluid!-->
+          <div class="api">
+            <div class="row-fluid">
+              <div class="span10 offset1">
+              <div class="row-fluid">
+                <div class="text-center">
+              <div class="span3">
+                <img src="http://www.photohackday.org/images/filepickerio.png">
+                <p>Usage for choosing files</p>
+              </div>
+
+              <div class="span3">
+                <img src="http://www.photohackday.org/images/500px.png">
+                <p>For getting public images</p>
+              </div>
+
+              <div class="span3">
+                <img src="http://www.photohackday.org/images/aviary_api.png">
+                <p>For editing photos</p>
+              </div>
+
+              <div class="span3">
+                <img src="http://www.photohackday.org/images/walgreens.png">
+                <p>Printing out mazes</p>
+              </div>
+              </div>
+
+              </div>
+            </div>
           </div>
 
         </div>
