@@ -83,7 +83,7 @@
       <div class="row-fluid">
         <div class="span10 offset1">
           <h1 class="text-center">Want to play? Let's get started!</h1><br>
-          <center><button class="btn-large">Get Started</button></center>
+          <center><a class="button-link" href="#">Get Started</a></center>
         </div>
       </div>
     </div>
