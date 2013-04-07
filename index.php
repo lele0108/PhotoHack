@@ -20,8 +20,8 @@
         <div class="row-fluid">
           <div class="span12">
             <div class="row-fluid">
-              <div class="span10 offset1">
-                <p>slider here</p>
+              <div class="span12">
+                <script>$('#maze').load('maze.php/?mazeImage=http://farm9.staticflickr.com/8319/7988784175_f662ddb020.jpg #maze');</script>
               </div>
             </div>
           </div>
