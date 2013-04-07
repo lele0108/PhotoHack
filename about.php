@@ -50,13 +50,14 @@
               <div class="span3">
                 <h2 class="text-right">12,920 <span>Calories</span></h2>
                 <h2 class="text-right">5 <span>APIs</span></h2>
-                <h2>
               </div>
 
             </div>
 
             </p>
           </div><!--end span10 offset1!-->
+          </div><!--end here !-->
+
 
           
           </div><!--row fluid!-->
