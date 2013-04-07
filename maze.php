@@ -55,8 +55,8 @@
         }); 
 
         // meze size
-        var imaze = maze(15, 15);
-        var iscale = 20; pixSize = iscale;
+        var imaze = maze(20, 40);
+        var iscale = 12; pixSize = iscale;
         var ibitmap = scale(bitmap(imaze), iscale);
         
         function initializeGame(multiplayer) {
@@ -141,20 +141,22 @@
   <div class="title">
     <div class="row-fluid">
       <div class="span10 offset1">
-        <h1 class="text-center">Title of Image</h1>
-        <p class="text-center">Timer: 0:01</p>
+        <h1 class="text-center">Maze</h1>
       </div>
     </div>
   </div>
   <div class="maze">
   <div class="row">
-  <div class="span10 offset1">
     <div class="maze-wrap">
       <div class="buttons">
-        <a id="single-player" class="button" href="#">Sigle player</a>
-        <a id="competition" class="button" href="#">Competition</a>
+        <div id="single-player" class="awesome-button"><p class="playbutton">Sigle player</p></div>
+        <div id="competition" class="awesome-button"><p class="playbutton">Competition</p></div>
+        <!--
+          <a id="single-player" class="button" href="#">Sigle player</a>
+          <a id="competition" class="button" href="#">Competition</a>
+        -->
       </div>
-      <canvas id="maze"></canvas>
+      <canvas id="maze" width="600" height="400"></canvas>
       <?php if (isset($_GET['mazeImage'])): ?>
         <img id="user-image" src="<?php echo $_GET['mazeImage']; ?>" />
       <?php else: ?>
@@ -162,7 +164,6 @@
         <img id="user-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />
       <?php endif; ?>
     </div>
-  </div>
   </div>
   </div>  
 <?php
