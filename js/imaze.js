@@ -1,3 +1,6 @@
+document.write("<script src='https://cdn.firebase.com/v0/firebase.js' type='text/javascript'></script>");
+document.write("<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js' type='text/javascript'></script>");
+
 function maze(x,y) {
 	var n=x*y-1;
 	if (n<0) {alert("illegal maze dimensions");return;}
@@ -60,6 +63,19 @@ function bitmap(m) {
 		map.push(line);
 	}
 	return map;
+}
+
+function requestMultiplayerGame(url, maze, scale){
+	var rand = function() {
+	    return Math.random().toString(36).substr(2);
+	};
+	var token = function() {
+	    return rand() + rand();
+	};
+	var randToken = token();
+	var myDataRef = new Firebase('https://z.firebaseio.com/'+randToken);
+	myDataRef.push({url: url, maze: maze, scale: scale});
+	return randToken;
 }
 
 function scale(bitmap, scale) {
