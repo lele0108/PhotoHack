@@ -100,14 +100,6 @@ $_SESSION['to_maze'] = $timestamp;
   </div>
   </div>
   </div>
-  <div style="display: none;">
-    <img id="user-image" src="<?php echo $_GET['mazeImage']; ?>" />
-  </div>
-  <script>
-    document.getElementById('button').onclick = function() {
-   alert("button was clicked");
-}​;​
-  </script>
 
 <?php
   include_once "footer.php";
