@@ -2,6 +2,7 @@
   include_once "header.php";
 ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
   <script src="../js/imaze.js" type="text/javascript"></script>	
   <script type="text/javascript">
@@ -54,6 +55,8 @@
   include_once "footer.php";
 ?>
 =======
+=======
+>>>>>>> 343864eef3251a0f465180cbe0385f075f0ed4d1
     <body>
 <script type="text/javascript">
 	function filepickerUploadDone(url){
@@ -128,4 +131,7 @@
 <?php
    include_once "footer.php";
 ?>
+<<<<<<< HEAD
+>>>>>>> 343864eef3251a0f465180cbe0385f075f0ed4d1
+=======
 >>>>>>> 343864eef3251a0f465180cbe0385f075f0ed4d1
