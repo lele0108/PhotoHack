@@ -42,7 +42,7 @@
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
-          <img src="/img/photo2.png">
+          <img src="/img/custom.gif">
           </div>
 
           </div><!--row fluid!-->
@@ -51,7 +51,7 @@
         <div id="features2">
         <div class="row-fluid">
           <div class="span4 offset1">
-             <img src="/img/upload.png">
+             <img src="/img/imports.gif">
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
