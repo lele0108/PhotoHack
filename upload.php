@@ -27,15 +27,16 @@
           <div class="span12">
             <div class="row-fluid">
               <div class="span10 offset1">
+              <h1 class="text-center">Upload and Play in Seconds</h1>
                 <div class="row-fluid">
 
                   <div class="span4">
-                    <center><img src="img/photo.jpg"></center>
+                    <center><img src="img/image.png" type="filepicker" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="filepickerUploadDone(event.fpfile.url)"></center>
                     <p class="text-center">1. Pick image you want</p>
                   </div>
 
                   <div class="span4">
-                    <center><img src="img/photo.png" style="opacity:0.8"></center>
+                    <center><img src="img/photo.png"></center>
                     <p class="text-center">2. Edit to what you want</p>
                   </div>
 
@@ -48,8 +49,8 @@
                   <br><br>
                   <!-- Button to trigger modal -->
                   <center>                   
-                  	<input type="filepicker" class="button-link" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="filepickerUploadDone(event.fpfile.url)">
-                  </center>                   
+                  	<input type="filepicker" class="awesome-button" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="filepickerUploadDone(event.fpfile.url)">
+                  </center>
                   </div>
               </div>
             </div>

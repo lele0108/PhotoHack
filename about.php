@@ -31,14 +31,23 @@
       <div class="features">
         <div class="row-fluid">
           <div id="topic">
-          <h1>Awesome Features</h1>
-          </div>
+          <h1>About Us</h1>
+          </div> 
         </div><!--end row fluid!-->
         <div id="features1">
         <div class="row-fluid">
           <div class="span4 offset1">
-            <h2>Custom Mazes</h2>
-            <p>Upload your images and we will generate stunning mazes for you to solve with your friends. The image will be the basis for the image and it is a ton of fun to play with friends when your bored.</p>
+            <h2>Team</h2>
+            <div class="span3"><img src="/img/image1.jpg"><div>
+            <p>Boris Suska: backend developer</p>
+            <p>  Zbynek Nedoma: backend developer</p>
+            <p> Jimmy Liu: front end designer</p>
+            <p> Danish Shaik: front end designer</p>
+            <p> Zuhayeer Musa: backend developer</p>
+
+
+
+            </p>
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
