@@ -8,11 +8,15 @@
 		window.location.href = "options.php/?mazeImage="+url;
 	}
 
+  $(".mazeChoose").click(function(){
+    window.location.href = "options.php/?mazeImage="+$(this).attr('src');
+  });
+
 	function searchNext(){
           _500px.api('/photos/search', { term: $("#searchInput").val(), rpp: 6, page: $("#page").val(), user_id: 3007733 }, function (response) {
               $("#logged_in").empty();
               $.each(response.data.photos, function () {
-                $('#logged_in').append('<span onclick="linkToMaze("'+(this.image_url.replace('2.jpg','4.jpg'))+'")"><img src="' + this.image_url + '" />');
+                $('#logged_in').append('<img class="mazeChoose" src="' + this.image_url + '" />');
               });
           });
           $("#page").val(parseInt($("#page").val())+1); 
@@ -23,7 +27,7 @@
         _500px.api('/photos/search', { term: $("#searchInput").val(), rpp: 6, page: $("#page").val(), user_id: 3007733 }, function (response) {
           $("#logged_in").empty();
               $.each(response.data.photos, function () {
-            	  $('#logged_in').append('<span onclick="linkToMaze("'+(this.image_url.replace('2.jpg','4.jpg'))+'")"><img src="' + this.image_url + '" />');
+            	  $('#logged_in').append('<img class="mazeChoose" src="' + this.image_url + '"/>');
               });
           });
           $("#page").val(parseInt($("#page").val())+1); 
