@@ -42,7 +42,7 @@
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
-          <img src="http://placehold.it/350x150">
+          <img src="/img/photo2.png">
           </div>
 
           </div><!--row fluid!-->
@@ -51,7 +51,7 @@
         <div id="features2">
         <div class="row-fluid">
           <div class="span4 offset1">
-             <img src="http://placehold.it/350x150">
+             <img src="/img/upload.png">
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
@@ -70,7 +70,7 @@
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
-          <img src="http://placehold.it/350x150">
+          <img src="/img/gamewithfriends.jpg">
           </div>
 
           </div><!--row fluid!-->
