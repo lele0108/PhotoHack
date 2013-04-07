@@ -2,7 +2,13 @@
   include_once "header.php";
 ?>
     <body>
+    <!-- Load Feather code -->
+<script type="text/javascript" src="http://feather.aviary.com/js/feather.js"></script>
 <script type='text/javascript'>
+	function uploadToMaze(){
+		window.location.href = "../maze.php/?mazeImage="+$("#image").attr('src');
+	}
+
    var featherEditor = new Aviary.Feather({
        apiKey: 'R5ctaJYc7kSNYxrLjHSREg',
        apiVersion: 2,
@@ -24,23 +30,7 @@
       return false;
    }
 </script>
-<?php 
-	//$ourFileName = "test.jpg";
-	//$ourFileHandle = fopen('/img/'+$ourFileName, 'w');
-	//file_put_contents($ourFileHandle,file_get_contents('http://www.filepicker.io/api/file/KHkhvZT7S1mynaVeSC18')); 
-	
-	
-$imagecontent= file_get_contents("http://www.filepicker.io/api/file/KHkhvZT7S1mynaVeSC18");
-$date = new DateTime();
-$timestamp = $date->getTimestamp();
-$savefile = fopen("img/customers/".$timestamp.".jpg", "w");
-fwrite($savefile, $imagecontent);
-fclose($savefile);
 
-$_SESSION['to_maze'] = $timestamp;
-
-echo $_SESSION['to_maze'];
-?>
     <div class="menu">
       <div class="row-fluid">
         <div class="span10 offset1">
@@ -90,7 +80,7 @@ echo $_SESSION['to_maze'];
 
                 </div>
               </div>
-              <center><br><br><br><a class="awesome-button" href="upload.php">Play Now!</a></center><br>
+              <center><br><br><br><div onclick="uploadToMaze()" class="awesome-button" >Play Now!</div></center><br>
             </div>
           </div>
       </div>

@@ -2,7 +2,21 @@
   include_once "header.php";
 ?>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
-  <script src="../js/imaze.js" type="text/javascript"></script>	
+  <script src="../js/imaze.js" type="text/javascript"></script>
+  <?php 
+
+$imagecontent= file_get_contents($_GET['mazeImage']);
+echo $_GET['mazeImage'];
+$date = new DateTime();
+$timestamp = $date->getTimestamp();
+$savefile = fopen("img/customers/".$timestamp.".jpg", "w");
+fwrite($savefile, $imagecontent);
+fclose($savefile);
+
+$_SESSION['to_maze'] = $timestamp;
+
+?>	
+
   <script type="text/javascript">
   //<!--
     $(window).load(function() {
@@ -88,6 +102,7 @@
    alert("button was clicked");
 }​;​
   </script>
+
 <?php
   include_once "footer.php";
 ?>
