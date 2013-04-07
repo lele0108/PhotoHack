@@ -1,6 +1,14 @@
 <?php
   include_once "header.php";
 ?>
+    <script  type='text/javascript'>
+$(document).ready(function(){
+  $("p").hide();
+  $(".span2").hover(function() {
+    $("p").show();
+      });
+});
+</script>
     <body>
     <div class="menu">
       <div class="row-fluid">
