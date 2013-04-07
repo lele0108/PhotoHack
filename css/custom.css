@@ -63,14 +63,12 @@ body p, h1, h2, h3, h4, h5 {
 }
 
 .upload img {
-	text-align:center;
-	border-radius: 150px;
-	-webkit-border-radius: 150px;
-	-moz-border-radius: 150px;
-	margin-bottom: 10px;
+	margin-bottom:20px;
+	border-radius:150px;
 }
 
-.features {
+.upload img:hover {
+	opacity:0.6;
 }
 
 .features h1 {
@@ -141,3 +139,22 @@ body p, h1, h2, h3, h4, h5 {
 .title h1 {
 	font-weight:100;
 }
+
+.awesome-button {
+	color: black;
+	border: #1984e8;
+	border-radius:9px;
+	border-style: solid;
+	border-width: 2px;
+	padding: 20px 30px;
+}
+
+.awesome-button:hover {
+	background: #1984e8;
+	border: #1984e8;
+	border-radius:9px;
+	border-style: solid;
+	border-width: 2px;
+	color:white;
+}
+

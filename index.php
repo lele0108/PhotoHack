@@ -83,7 +83,7 @@
       <div class="row-fluid">
         <div class="span10 offset1">
           <h1 class="text-center">Want to play? Let's get started!</h1><br><br>
-          <center><a class="button-link" href="upload.php">Get Started</a></center>
+          <center><a class="awesome-button" href="upload.php">Get Started</a></center>
         </div>
       </div>
     </div>
