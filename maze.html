@@ -35,8 +35,8 @@
         for (var x=0; x<width; x++) {
           if (ibitmap[y][x] == 1) {
             // black
-            ctx.fillStyle = "rgba("+0+","+0+","+0+","+1+")";
-            ctx.fillRect( x, y, 1, 1 );
+            //ctx.fillStyle = "rgba("+0+","+0+","+0+","+1+")";
+            //ctx.fillRect( x, y, 1, 1 );
           }
           else {
             // White
@@ -55,19 +55,6 @@
       //Create a reference to the pixel data for our drawing.
       var pixelDataRef = new Firebase('https://z.firebaseio.com/test-data');
   
-      //Setup each color palette & add it to the screen
-      var colors = ["fff","000","f00","0f0","00f","88f","f8d","f88","f05","f80","0f8","cf0","08f","408","ff8","8ff"];
-      for (c in colors) {
-        var item = $('<div/>').css("background-color", '#' + colors[c]).addClass("colorbox");
-        item.click((function () {
-          var col = colors[c];
-          return function () {
-            currentColor = col;
-          };
-        })());
-        item.appendTo('#colorholder');
-      }
-
       //Keep track of if the mouse is up or down
       var $canvas = $(canvas);
       $canvas.bind('mousedown touchstart', function () {mouseDown = 1;});
@@ -85,12 +72,16 @@
           y1 = Math.floor((e.pageY - offset.top) / pixSize);
         
         var neighbours = canMove(ctx, x1, y1, pixSize, [0,255,0,255]);
-        if (neighbours > 0) {
+        if (neighbours.count > 0) {
             //pixelDataRef.child(x0 + ":" + y0).set(currentColor);
-            drawPixel({name: function() {return x1 + ":" + y1}, val: function() {return currentColor === "fff" ? null : currentColor} });
+            drawPixel({name: function() {return x1 + ":" + y1}, val: function() {return currentColor} });
+            if (neighbours.fillAlso) {
+              //pixelDataRef.child(neighbours.fillAlso[0] + ":" + neighbours.fillAlso[1]).set(currentColor);
+              drawPixel({name: function() {return neighbours.fillAlso[0] + ":" + neighbours.fillAlso[1]}, val: function() {return currentColor} });
+            }
             
-            if (neighbours > 1) {
-              removePixels = pixelsToRemove(ctx, lastPlaced, [x1,y1], pixSize);
+            if (neighbours.count > 1) {
+              removePixels = pixelsToRemove(ctx, lastPlaced, neighbours.closest, pixSize);
               for (var i=0; i<removePixels.length; i++) {
                   //pixelDataRef.child(x0 + ":" + y0).set(null);
                   clearPixel({name: function() {return removePixels[i][0] + ":" + removePixels[i][1]}});                
@@ -134,7 +125,8 @@
       }
       var clearPixel = function(snapshot) {
         var coords = snapshot.name().split(":");
-        ctx.clearRect(parseInt(coords[0]) * pixSize, parseInt(coords[1]) * pixSize, pixSize, pixSize);
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(parseInt(coords[0]) * pixSize, parseInt(coords[1]) * pixSize, pixSize, pixSize);
       }
       pixelDataRef.on('child_added', drawPixel);
       pixelDataRef.on('child_changed', drawPixel);

@@ -150,33 +150,85 @@ function _isColor(pixel, color) {
   return pixel[0] == color[0] && pixel[1] == color[1] && pixel[2] == color[2] && pixel[3] == color[3];
 }
 
+function _pointInArray(point, array) {
+  for (var i=array.length-1; i>=0; i--) {
+    if (point[0] == array[i][0] && point[1] == array[i][1]) {
+      return i;
+    }
+  }
+  return -1; 
+}
+
+
 function canMove(ctx, x, y, scale, myColor) {
   var c = ctx.getImageData(x*scale, y*scale, 1, 1).data;
   // can move on white squere
   if (_isColor(c, [255,255,255,255])) {
     // is neighbour pixel of myColour
     var eq = 0;
+    var neighbrou, fillAlso;
     // top
-    c = ctx.getImageData(x*scale, (y-1)*scale, 1, 1).data;    
-    if (_isColor(c, myColor)) {
+    var top = ctx.getImageData(x*scale, (y-1)*scale, 1, 1).data;    
+    if (_isColor(top, myColor)) {
       eq++;
+      neighbrou = [x, y-1];
     }
     // right
-    c = ctx.getImageData((x+1)*scale, y*scale, 1, 1).data;    
-    if (_isColor(c, myColor)) {
+    var right = ctx.getImageData((x+1)*scale, y*scale, 1, 1).data;    
+    if (_isColor(right, myColor)) {
       eq++;
+      neighbrou = [x+1, y];
     }
     // bottom
-    c = ctx.getImageData(x*scale, (y+1)*scale, 1, 1).data;    
-    if (_isColor(c, myColor)) {
+    var bottom = ctx.getImageData(x*scale, (y+1)*scale, 1, 1).data;    
+    if (_isColor(bottom, myColor)) {
       eq++;
+      neighbrou = [x, y+1];
     }
     // left
-    c = ctx.getImageData((x-1)*scale, y*scale, 1, 1).data;    
+    var left = ctx.getImageData((x-1)*scale, y*scale, 1, 1).data;    
+    if (_isColor(left, myColor)) {
+      eq++;
+      neighbrou = [x-1, y];
+    }
+
+    // top-right
+    c = ctx.getImageData((x+1)*scale, (y-1)*scale, 1, 1).data;    
     if (_isColor(c, myColor)) {
       eq++;
+      if (_isColor(top, [255,255,255,255]))
+        fillAlso = [x, y-1];
+      else
+        fillAlso = [x+1, y];
     }
-    return eq;
+    // bottom-right
+    c = ctx.getImageData((x+1)*scale, (y+1)*scale, 1, 1).data;    
+    if (_isColor(c, myColor)) {
+      eq++;
+      if (_isColor(bottom, [255,255,255,255]))
+        fillAlso = [x, y+1];
+      else
+        fillAlso = [x+1, y];
+    }
+    // bottom-left
+    c = ctx.getImageData((x-1)*scale, (y+1)*scale, 1, 1).data;    
+    if (_isColor(c, myColor)) {
+      eq++;
+      if (_isColor(bottom, [255,255,255,255]))
+        fillAlso = [x, y+1];
+      else
+        fillAlso = [x-1, y];
+    }
+    // top-left
+    c = ctx.getImageData((x-1)*scale, (y-1)*scale, 1, 1).data;    
+    if (_isColor(c, myColor)) {
+      eq++;
+      if (_isColor(top, [255,255,255,255]))
+        fillAlso = [x, y-1];
+      else
+        fillAlso = [x-1, y];
+    }
+    return { count:eq, closest:neighbrou, fillAlso:fillAlso };
   }
   return 0;
 }
@@ -187,34 +239,34 @@ function pixelsToRemove(ctx, fromPixel, toPixel, scale) {
     return removePixels;
   }
   
-  while (fromPixel[0] != toPixel[0] && fromPixel[1] != toPixel[1]) {
+  while (fromPixel[0] != toPixel[0] || fromPixel[1] != toPixel[1]) {
     var x = fromPixel[0], y = fromPixel[1];
     var t = ctx.getImageData(toPixel[0]*scale, toPixel[1]*scale, 1, 1).data;
-    removePixels.push(fromPixel);
+    removePixels.push(fromPixel.slice()); // store the copy of array
     // top
     c = ctx.getImageData(x*scale, (y-1)*scale, 1, 1).data;    
-    if (_isColor(c, t)) {
+    if ( _isColor(c, t) && _pointInArray([x, y-1], removePixels) < 0 ) {
       fromPixel[0] = x;
       fromPixel[1] = y-1;
       continue;
     }
     // right
     c = ctx.getImageData((x+1)*scale, y*scale, 1, 1).data;    
-    if (_isColor(c, t)) {
+    if ( _isColor(c, t) && _pointInArray([x+1, y], removePixels) < 0 ) {
       fromPixel[0] = x+1;
       fromPixel[1] = y;
       continue;
     }
     // bottom
     c = ctx.getImageData(x*scale, (y+1)*scale, 1, 1).data;    
-    if (_isColor(c, t)) {
+    if ( _isColor(c, t) && _pointInArray([x, y+1], removePixels) < 0 ) {
       fromPixel[0] = x;
       fromPixel[1] = y+1;
       continue;
     }
     // left
     c = ctx.getImageData((x-1)*scale, y*scale, 1, 1).data;    
-    if (_isColor(c, t)) {
+    if ( _isColor(c, t) && _pointInArray([x-1, y], removePixels) < 0 ) {
       fromPixel[0] = x-1;
       fromPixel[1] = y;
       continue;
