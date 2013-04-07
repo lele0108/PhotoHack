@@ -74,7 +74,7 @@ function requestMultiplayerGame(url, maze, scale){
 	};
 	var randToken = token();
 	var myDataRef = new Firebase('https://z.firebaseio.com/'+randToken);
-	myDataRef.push({url: url, maze: maze, scale: scale});
+	myDataRef.push({url: url, maze: JSON.stringify(maze), scale: scale});
 	return randToken;
 }
 
