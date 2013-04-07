@@ -2,7 +2,14 @@
   include_once "header.php";
 ?>
     <body>
-    
+<script type="text/javascript">
+
+	function filepickerUploadDone(url){
+		//$('#maze').load('maze.html');
+		window.location.href = "maze.html/?mazeImg="+url;
+	}
+
+</script>    
     <div class="menu">
       <div class="row-fluid">
         <div class="span10 offset1">
@@ -44,7 +51,7 @@
                   <!-- Button to trigger modal -->
                   <center>
                   	<a href="#myModal" role="button" class="btn" data-toggle="modal">Pick Image</a>                      
-                  	<input type="filepicker" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="alert(event.fpfile.url)">
+                  	<input type="filepicker" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="filepickerUploadDone(event.fpfile.url)">
                   </center>
                    
                   <!-- Modal -->
