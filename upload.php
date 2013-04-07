@@ -3,12 +3,8 @@
 ?>
     <body>
 <script type="text/javascript">
-
-<<<<<<< HEAD
 	function filepickerUploadDone(url){
-=======
-  function filepickerUploadDone(url){
->>>>>>> ef4f7a8fa2f9ad5bf79cd5dce7e396dd4d2ff325
+
 		//$('#maze').load('maze.html');
 		window.location.href = "maze.html/?mazeImg="+url;
 	}
