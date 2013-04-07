@@ -5,14 +5,14 @@
 <script src="../js/500px.js"></script>
 <script type="text/javascript">
 	function linkToMaze(url){
-		window.location.href = "maze.php/?mazeImage="+url;
+		window.location.href = "options.php/?mazeImage="+url;
 	}
 
 	function searchNext(){
           _500px.api('/photos/search', { term: $("#searchInput").val(), rpp: 6, page: $("#page").val(), user_id: 3007733 }, function (response) {
               $("#logged_in").empty();
               $.each(response.data.photos, function () {
-                $('#logged_in').append('<span onclick="linkToMaze('+(this.image_url.replace('2.jpg','4.jpg'))+')"><img src="' + this.image_url + '" />');
+                $('#logged_in').append('<span onclick="linkToMaze("'+(this.image_url.replace('2.jpg','4.jpg'))+'")"><img src="' + this.image_url + '" />');
               });
           });
           $("#page").val(parseInt($("#page").val())+1); 
@@ -23,7 +23,7 @@
         _500px.api('/photos/search', { term: $("#searchInput").val(), rpp: 6, page: $("#page").val(), user_id: 3007733 }, function (response) {
           $("#logged_in").empty();
               $.each(response.data.photos, function () {
-            	  $('#logged_in').append('<span onclick="linkToMaze('+(this.image_url.replace('2.jpg','4.jpg'))+')"><img src="' + this.image_url + '" />');
+            	  $('#logged_in').append('<span onclick="linkToMaze("'+(this.image_url.replace('2.jpg','4.jpg'))+'")"><img src="' + this.image_url + '" />');
               });
           });
           $("#page").val(parseInt($("#page").val())+1); 
@@ -35,7 +35,11 @@
         });
       });
     </script>
-
+    
+<?php
+	if(isset($_SESSION['to_maze'])){
+		unset($_SESSION['to_maze']); 
+	}?>
     <div class="menu">
       <div class="row-fluid">
         <div class="span10 offset1">
