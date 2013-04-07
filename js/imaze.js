@@ -70,7 +70,7 @@ function requestMultiplayerGame(url, maze, scale){
 	var n = d.getTime();
 	var randToken = n;
 	var myDataRef = new Firebase('https://z.firebaseio.com/'+randToken);
-	myDataRef.set({url: url, maze: JSON.stringify(maze), scale: scale});
+	myDataRef.set({url: url, maze: JSON.stringify(maze), scale: scale, player1: false, player2: false});
 	return randToken;
 }
 
@@ -81,6 +81,19 @@ function loadMaze(token){
 	});
 	var obj = jQuery.parseJSON(message);
 	return obj;
+}
+
+function isReady(token){
+	var myDataRef1 = new Firebase('https://z.firebaseio.com/'+token);
+	var player1 = false;
+	var player2 = false;
+	myDataRef1.on('value', function(snapshot) {
+	  player1 = snapshot.val().player1;
+	  player2 = snapshot.val().player2;
+	});
+	if (player1 && player2)
+		return true;
+	return false;
 }
 
 function scale(bitmap, scale) {
