@@ -12,7 +12,6 @@
         
         _500px.api('/users', function (response) {
             var me = response.data.user;
-            $("#not_logged_in").css("display","none");
             // Get my favorites
             _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 5, page: $("#page").val(), user_id: me.id }, function (response) {
                 console.log(response);
@@ -37,7 +36,6 @@
           // Get my user id
           _500px.api('/users', function (response) {
             var me = response.data.user;
-            $("#not_logged_in").css("display","none");
             // Get my favorites
             _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 5, page: $("#page").val(), user_id: me.id }, function (response) {
                 console.log(response);
