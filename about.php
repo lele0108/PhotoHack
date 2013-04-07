@@ -49,7 +49,7 @@
               <div class="span3"><img src="/img/jimmy.jpg"><p>Jimmy Liu: Front End Designer</p></div>
               <div class="span3">
                 <h2 class="text-right">12,920 <span>Calories</span></h2>
-                <h2 class="text-right">5 <span>APIs</span></h2>
+                <h2 class="text-right">3 <span>APIs</span></h2>
               </div>
 
             </div>
@@ -75,26 +75,20 @@
               <div class="span10 offset1">
               <div class="row-fluid">
                 <div class="text-center">
-              <div class="span3">
+              <div class="span4">
                 <img src="http://www.photohackday.org/images/filepickerio.png">
                 <p>Usage for choosing files</p>
               </div>
 
-              <div class="span3">
+              <div class="span4">
                 <img src="http://www.photohackday.org/images/500px.png">
                 <p>For getting public images</p>
               </div>
 
-              <div class="span3">
+              <div class="span4">
                 <img src="http://www.photohackday.org/images/aviary_api.png">
                 <p>For editing photos</p>
-              </div>
-
-              <div class="span3">
-                <img src="http://www.photohackday.org/images/walgreens.png">
-                <p>Printing out mazes</p>
-              </div>
-              </div>
+              </div>            </div>
 
               </div>
             </div>
