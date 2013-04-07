@@ -18,23 +18,24 @@
           $('#not_logged_in').hide();
           $('#logged_in').show();
 
-          // Get my user id
-          _500px.api('/users', function (response) {
-            var me = response.data.user;
-
-            // Get my favorites
-            _500px.api('/photos', { feature: 'user_favorites', user_id: me.id }, function (response) {
-              if (response.data.photos.length == 0) {
-                alert('You have no favorite photos.');
-              } else {
-                $.each(response.data.photos, function () {
-                  $('#logged_in').append('<img src="' + this.image_url + '" />');
-                });
-              }
-            });
-          });
         });
 
+     // Get my user id
+        _500px.api('/users', function (response) {
+          var me = response.data.user;
+		  
+          // Get my favorites
+          _500px.api('/photos', { feature: 'user_favorites', user_id: me.id }, function (response) {
+            if (response.data.photos.length == 0) {
+              alert('You have no favorite photos.');
+            } else {
+              $.each(response.data.photos, function () {
+                $('#logged_in').append('<img src="' + this.image_url + '" />');
+              });
+            }
+          });
+        });
+        
         _500px.on('logout', function () {
           $('#not_logged_in').show();
           $('#logged_in').hide();
