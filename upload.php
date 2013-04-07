@@ -11,17 +11,22 @@
 <script src="../js/500px.js"></script>
  <script>
       function searchNext(){
-        $("#logged_in").empty();
-        
-        _500px.api('/users', function (response) {
-            var me = response.data.user;
-            // Get my favorites
-            _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 6, page: $("#page").val(), user_id: me.id }, function (response) {
-                console.log(response);
-                $.each(response.data.photos, function () {
-                  $('#logged_in').append('<img src="' + this.image_url + '" />');
-                });
-            });
+          _500px.api('/photos/search', { term: $("#searchInput").val(), rpp: 6, page: $("#page").val(), user_id: 3007733 }, function (response) {
+              $("#logged_in").empty();
+              $.each(response.data.photos, function () {
+                $('#logged_in').append('<img src="' + this.image_url + '" />');
+              });
+          });
+          $("#page").val(parseInt($("#page").val())+1); 
+      }
+
+      function searchNew(){
+        $("#page").val(1);
+        _500px.api('/photos/search', { term: $("#searchInput").val(), rpp: 6, page: $("#page").val(), user_id: 3007733 }, function (response) {
+          $("#logged_in").empty();
+              $.each(response.data.photos, function () {
+                $('#logged_in').append('<img src="' + this.image_url + '" />');
+              });
           });
           $("#page").val(parseInt($("#page").val())+1); 
       }
@@ -30,37 +35,6 @@
         _500px.init({
           sdk_key: '9920bb2b69c7f071b25edeb643cc70d9c98373cc'
         });
-          
-// When the user logs in we will pull their favorite photos
-        _500px.on('authorization_obtained', function () {
-          $('#not_logged_in').hide();
-          $('#logged_in').show();
-
-          // Get my user id
-          _500px.api('/users', function (response) {
-            var me = response.data.user;
-            // Get my favorites
-            _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 6, page: $("#page").val(), user_id: me.id }, function (response) {
-                console.log(response);
-                $.each(response.data.photos, function () {
-                  $('#logged_in').append('<img src="' + this.image_url + '" />');
-                });
-                $("#page").val(parseInt($("#page").val())+1);
-            });
-          });
-        });
-
-       _500px.on('logout', function () {
-          $('#not_logged_in').show();
-          $('#logged_in').hide();
-          $('#logged_in').html('');
-        });
-
-        // If the user has already logged in & authorized your application, this will fire an 'authorization_obtained' event
-        _500px.getAuthorizationStatus();
-
-        // If the user clicks the login link, log them in
-        $('#login').click(_500px.login);
       });
     </script>
 
@@ -115,20 +89,14 @@
                       <h3 id="myModalLabel">Public Gallery <?php echo $_GET['term']; ?></h3>
                     </div>
                     <div class="modal-body">
-                     <form name="search" id="search">
-                        <input type="text" class="awesome-field"name="term">
-                        <button type="submit" class="awesome-button3">Search</button>
-                      </form>
+                    <input id="searchInput" type="text" name="term" class="awesomeinput">
+                        <button class="awesome-button3" onclick="searchNew()">Search</button>
                       <div class="fivepx">
-                      <div id="not_logged_in">
-                        <a href="#" id="login">Login to 500px</a>
-                      </div>
-                      <div id="logged_in" style="display: none;">
-                      </div>
-                      <input id="page" type="hidden" name="page" value="1">
-
-                      <button id="" class="awesome-button3" style="text-align:left !important" onclick="searchNext()">Next</button>
+                      <div id="logged_in"></div>
+                      <br>
+                      <button id="" class="awesome-button3" onclick="searchNext()">Next</button>
                     </div>
+                    <input id="page" type="hidden" name="page" value="1">
                     </div>
                     <div class="modal-footer">
                       <button class="awesome-button3" data-dismiss="modal" aria-hidden="true">Close</button>

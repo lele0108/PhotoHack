@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>500px SDK Example 1</title>
-    <script src="/500px.js"></script>
+    <script src="../js/500px.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
   </head>
   <body>
