@@ -194,21 +194,22 @@ body p, h1, h2, h3, h4, h5 {
 
 .awesome-button2 {
 	color: white;
-	border: #1984e8;
+	border: white;
 	border-radius:10px;
 	border-style: solid;
 	border-width: 2px;
 	padding: 20px 30px;
 	background:none;
+	margin-right:10px;
 }
 
 .awesome-button2:hover {
-	background: #1984e8;
-	border: #1984e8;
+	background: white;
+	border: white;
 	border-radius:9px;
 	border-style: solid;
 	border-width: 2px;
-	color:white;
+	color:black;
 	text-decoration:none;
 }
 
