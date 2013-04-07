@@ -6,147 +6,150 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
   <script src="./js/jquery.ui.touch-punch.min.js"></script>
   <script type="text/javascript" src="js/imaze.js"></script>
+  <script type="text/javascript" src="js/canvas-touch.js"></script>
+  <script type="text/javascript" src="js/URI.js"></script>
   <title>maze</title>
+  <style>
+    .maze-wrap {
+      position: relative;
+      float: left;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -o-user-select: none;
+      user-select: none;
+    }
+    
+    .buttons {
+      position: absolute;
+      top: 50%;
+      margin-top: -15px;
+      height: 30px;
+      line-height: 30px;
+      width: 100%;
+      text-align: center;
+      z-index: 200;
+    }
+    
+    
+    
+    #maze {
+      position: relative;
+      z-index: 100;
+    }
+    
+    #user-image {
+      position: absolute;
+      top:0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }  
+  </style>
   <script type="text/javascript">
   //<!--
-    $(window).load(function() {
-      var canvas = document.getElementById('maze');
-      var ctx = canvas.getContext("2d");
-      var wPixel = ctx.createImageData(1,1);
-      wPixel.data[0] = 255; wPixel.data[1] = 255; wPixel.data[2] = 255; wPixel.data[3] = 1;
-      
-      var bPixel = ctx.createImageData(1,1);
-      bPixel.data[0] = 0; wPixel.data[1] = 0; bPixel.data[2] = 0; bPixel.data[3] = 1;
-      
-      var img = document.getElementById('user-image');
-      
-      var imaze = maze(30, 50);
-      var iscale = 10;
-      var ibitmap = scale(bitmap(imaze), iscale);
-      
-      var width = ibitmap[0].length;
-      var height = ibitmap.length;
-      canvas.width = width;
-      canvas.height = height;
-      
-      for (var y=0; y<height; y++) {
-        for (var x=0; x<width; x++) {
-          if (ibitmap[y][x] == 1) {
-            // black
-            //ctx.fillStyle = "rgba("+0+","+0+","+0+","+1+")";
-            //ctx.fillRect( x, y, 1, 1 );
+  $(document).ready(function() {
+    var canvas = document.getElementById('maze');
+    var ctx = canvas.getContext("2d");
+
+    var token = window.location.href.match(/token=([^&]+)/);
+    if (token) {
+        token = token[1];
+        loadMaze(token, function (snapshot) {
+          if (snapshot.name() == 'data') {
+        	  var data = JSON.parse(snapshot.val());
+             
+            // load image;
+            $('#user-image').attr('src', data.url);
+            // bitmap
+            var ibitmap = scale(bitmap(data.maze), data.scale);
+            
+            var $readyBtn = $('<a href="#" class="button">I\'m ready!</a>').click(function() {
+              setReady(token, "player2", true);
+            });
+            $('.buttons').html($readyBtn);
+            $readyBtn = null;
+          }
+          else if (snapshot.name() == 'ready') {
+            var ready = snapshot.val();
+            if (ready.player1 && ready.player2) {
+              // starting count down shuld goes here
+              showMaze();
+            } 
+          }
+      	});
+    }
+    else {
+        $('#single-player').click(function() {
+          initializeGame(false);
+        }); 
+        $('#competition').click(function() {
+          initializeGame(true);
+        }); 
+
+        // meze size
+        var imaze = maze(5, 5);
+        var iscale = 15;
+        var ibitmap = scale(bitmap(imaze), iscale);
+        
+        var width = ibitmap[0].length;
+        var height = ibitmap.length;
+        canvas.width = width;
+        canvas.height = height;
+  
+        function initializeGame(multiplayer) {
+          if (multiplayer) {
+              var token = requestMultiplayerGame($('#user-image').attr('src'), imaze, iscale);
+              // initialize moving      
+              initializeCanvas(canvas, ctx, [0,255,0,255], token);
+              var $readyBtn = $('<a href="#" class="button">I\'m ready!</a>').click(function() {
+                setReady("player1", true);
+              });
+              $('.buttons').html($readyBtn);
+              $readyBtn = null;
           }
           else {
-            // White
-            ctx.fillStyle = "rgba("+255+","+255+","+255+","+1+")";
-            ctx.fillRect( x, y, 1, 1 );
+            // initialize moving      
+            initializeCanvas(canvas, ctx);
+            // show maze immediately
+            showMaze();
           }
-        }        
-      }
-      
-      // Starting point
-      ctx.fillStyle = "#0f0";
-      ctx.fillRect( 0, iscale, iscale, iscale );
-      // destination point
-      ctx.fillStyle = "#f00";
-      ctx.fillRect( width-iscale, height-(2*iscale), iscale, iscale );
-      
-      //Set up some globals
-      var pixSize = iscale, lastPoint = null, lastPlaced = null, currentColor = "0f0", mouseDown = 0;
-  
-      //Create a reference to the pixel data for our drawing.
-      var pixelDataRef = new Firebase('https://z.firebaseio.com/test-data');
-  
-      //Keep track of if the mouse is up or down
-      var $canvas = $(canvas);
-      $canvas.bind('mousedown touchstart', function () {mouseDown = 1;});
-      $canvas.bind('mouseout mouseup mouseleave touchend touchcancel', function () {
-        mouseDown = 0, lastPoint = null;
-      });
-  
-      //Draw a line from the mouse's last position to its current position
-      var drawLineOnMouseMove = function(e) {
-        if (!mouseDown) return;
-  
-        // Bresenham's line algorithm. We use this to ensure smooth lines are drawn
-        var offset = $canvas.offset();
-        var x1 = Math.floor((e.pageX - offset.left) / pixSize),
-          y1 = Math.floor((e.pageY - offset.top) / pixSize);
+        }
         
-        var neighbours = canMove(ctx, x1, y1, pixSize, [0,255,0,255]);
-        if (neighbours.count > 0) {
-            if (neighbours.finished) {
-              $canvas.animate({opacity: 0});
-              return;
-            }
-        
-            //pixelDataRef.child(x0 + ":" + y0).set(currentColor);
-            drawPixel({name: function() {return x1 + ":" + y1}, val: function() {return currentColor} });
-            if (neighbours.fillAlso) {
-              //pixelDataRef.child(neighbours.fillAlso[0] + ":" + neighbours.fillAlso[1]).set(currentColor);
-              drawPixel({name: function() {return neighbours.fillAlso[0] + ":" + neighbours.fillAlso[1]}, val: function() {return currentColor} });
-            }
-            
-            if (neighbours.count > 1) {
-              // path was corrected
-              removePixels = pixelsToRemove(ctx, lastPlaced, neighbours.closest, pixSize);
-              for (var i=0; i<removePixels.length; i++) {
-                  //pixelDataRef.child(x0 + ":" + y0).set(null);
-                  clearPixel({name: function() {return removePixels[i][0] + ":" + removePixels[i][1]}});                
+        function showMaze() {
+          for (var y=0; y<height; y++) {
+            for (var x=0; x<width; x++) {
+              if (ibitmap[y][x] != 1) {
+                // White
+                ctx.fillStyle = "#fff";
+                ctx.fillRect( x, y, 1, 1 );
               }
-            }
-            lastPlaced = [x1, y1];
-        }
+            }        
+          }
         
-        /*
-        var x0 = (lastPoint == null) ? x1 : lastPoint[0];
-        var y0 = (lastPoint == null) ? y1 : lastPoint[1];
-        var dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
-        var sx = (x0 < x1) ? 1 : -1, sy = (y0 < y1) ? 1 : -1, err = dx - dy;
-        while (true) {
-          //write the pixel into Firebase, or if we are drawing white, remove the pixel
-          //pixelDataRef.child(x0 + ":" + y0).set(currentColor === "fff" ? null : currentColor);
-          drawPixel({name: function() {return x0 + ":" + y0}, val: function() {return currentColor === "fff" ? null : currentColor} });
-  
-          if (x0 == x1 && y0 == y1) break;
-          var e2 = 2 * err;
-          if (e2 > -dy) {
-            err = err - dy;
-            x0 = x0 + sx;
-          }
-          if (e2 < dx) {
-            err = err + dx;
-            y0 = y0 + sy;
-          }
+          // Starting point
+          ctx.fillStyle = "#0f0";
+          ctx.fillRect( 0, iscale, iscale, iscale );
+          // destination point
+          ctx.fillStyle = "#f00";
+          ctx.fillRect( width-iscale, height-(2*iscale), iscale, iscale );
+                           
+          // Globa pixSize variable                                                          
+          pixSize = iscale;
         }
-        */
-        lastPoint = [x1, y1];
-      }
-      $canvas.bind('mousemove touchmove mousedown', drawLineOnMouseMove);
-  
-      // Add callbacks that are fired any time the pixel data changes and adjusts the canvas appropriately.
-      // Note that child_added events will be fired for initial pixel data as well.
-      var drawPixel = function(snapshot) {
-        var coords = snapshot.name().split(":");
-        ctx.fillStyle = "#" + snapshot.val();
-        ctx.fillRect((parseInt(coords[0]) * pixSize), (parseInt(coords[1]) * pixSize), pixSize, pixSize);
-      }
-      var clearPixel = function(snapshot) {
-        var coords = snapshot.name().split(":");
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(parseInt(coords[0]) * pixSize, parseInt(coords[1]) * pixSize, pixSize, pixSize);
-      }
-      pixelDataRef.on('child_added', drawPixel);
-      pixelDataRef.on('child_changed', drawPixel);
-      pixelDataRef.on('child_removed', clearPixel);
-    });
+    }
+  });
   //-->
   </script>
 </head>
 <body>
-  <div style="position: relative; float: left; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -o-user-select: none; user-select: none;">
-    <canvas id="maze" width="100" height="100" style="position: relative; z-index: 100;"></canvas>
-    <img id="user-image" src="img/demo.jpg" style="position: absolute; top:0; left: 0; width: 100%; height: 100%;" />
+  <div class="maze-wrap">
+    <div class="buttons">
+      <a id="single-player" class="button" href="#">Sigle player</a>
+      <a id="competition" class="button" href="#">Competition</a>
+    </div>
+    <canvas id="maze" width="100" height="100"></canvas>
+    <img id="user-image" src="img/demo.jpg"/>
   </div>
 </body>
 </html>

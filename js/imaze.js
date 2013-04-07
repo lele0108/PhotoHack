@@ -65,35 +65,26 @@ function bitmap(m) {
 	return map;
 }
 
-function requestMultiplayerGame(url, maze, scale){
-    var d = new Date();
-	var n = d.getTime();
-	var randToken = n;
+function requestMultiplayerGame(url, maze, scale, readyFn){
+	var n = new Date().getTime();
+	var randToken = n + Math.random().toString().substr(2);
 	var myDataRef = new Firebase('https://z.firebaseio.com/'+randToken);
-	myDataRef.set({url: url, maze: JSON.stringify(maze), scale: scale, player1: false, player2: false});
+	myDataRef.child('data').set(JSON.stringify({url: url, maze: maze, scale: scale}));
+  myDataRef = new Firebase('https://z.firebaseio.com/'+randToken+'/ready');
+  myDataRef.child('player1').set(false);
+  myDataRef.child('player2').set(false);
+  myDataRef.on('child_added', readyFn);
 	return randToken;
 }
 
-function loadMaze(token){
+function loadMaze(token, loadedFn){
 	var myDataRef = new Firebase('https://z.firebaseio.com/'+token);
-	myDataRef.on('child_added', function (snapshot) {
-	   var message = JSON.parse(snapshot.val());
-	});
-	var obj = jQuery.parseJSON(message);
-	return obj;
+	myDataRef.on('child_added', loadedFn);
 }
 
-function isReady(token){
-	var myDataRef1 = new Firebase('https://z.firebaseio.com/'+token);
-	var player1 = false;
-	var player2 = false;
-	myDataRef1.on('value', function(snapshot) {
-	  player1 = snapshot.val().player1;
-	  player2 = snapshot.val().player2;
-	});
-	if (player1 && player2)
-		return true;
-	return false;
+function setReady(token, player, isReady) {
+  var myDataRef = new Firebase('https://z.firebaseio.com/'+token+'/ready');
+  myDataRef.child(player).set(isReady);
 }
 
 function scale(bitmap, scale) {
@@ -231,7 +222,7 @@ function canMove(ctx, x, y, scale, myColor) {
     }
     
     // clear fillAlso if neighbrou was found
-    if (neighbrou) {
+    if (neighbrou && fillAlso) {
       fillAlso = null;
     }
     return { count:eq, closest:neighbrou, fillAlso:fillAlso, finished:finished };
