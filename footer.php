@@ -5,7 +5,7 @@
           <p>Created at PhotoHack Day 2013</p>
         </div>
         <div class="span5">
-          <p class="text-right">Copyright 2013</p>
+          <p class="text-right">Copyright &#169; 2013</p>
         </div>
 
       </div>
