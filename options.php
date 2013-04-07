@@ -66,14 +66,15 @@ function uploadToMaze(){
               <div class="row-fluid">
               <div class="text-center">
 
-                <div class="span3"><button class="awesome-button4" value='Edit photo' onclick="return launchEditor('image', '<?php echo $_GET['mazeImage'];?>');">Edit This Photo</button></div>
+                <div class="span4"><button class="awesome-button4" value='Edit photo' onclick="return launchEditor('image', '<?php echo $_GET['mazeImage'];?>');">Edit This Photo</button></div>
 
-                
-                <div class="span3"><button class="awesome-button4" data-toggle="button">Single Player</button></div>
+<div class="btn-group" data-toggle="buttons-radio">
+  <button type="button" class="awesome-button4">Easy</button>
+  <button type="button" class="awesome-button4">Medium</button>
+  <button type="button" class="awesome-button4">Hard</button>
+</div>
 
-                <div class="span3"><button class="awesome-button4" data-toggle="button">Two Player</button></div>
-
-                <div class="span3"><a href="/upload.php"><button class="awesome-button4">New Photo</button></a>
+                <div class="span4"><a href="/upload.php"><button class="awesome-button4">New Photo</button></a>
                 </div>
 
                 </div>
