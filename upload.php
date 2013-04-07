@@ -7,7 +7,63 @@
 		window.location.href = "maze.php/?mazeImage="+url;
 	}
 
-</script>    
+</script> 
+<script src="../js/500px.js"></script>
+ <script>
+      function searchNext(){
+        $("#logged_in").empty();
+        
+        _500px.api('/users', function (response) {
+            var me = response.data.user;
+            // Get my favorites
+            _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 5, page: $("#page").val(), user_id: me.id }, function (response) {
+                console.log(response);
+                $.each(response.data.photos, function () {
+                  $('#logged_in').append('<img src="' + this.image_url + '" />');
+                });
+            });
+          });
+          $("#page").val(parseInt($("#page").val())+1); 
+      }
+    
+      $(function () {
+        _500px.init({
+          sdk_key: '9920bb2b69c7f071b25edeb643cc70d9c98373cc'
+        });
+          
+// When the user logs in we will pull their favorite photos
+        _500px.on('authorization_obtained', function () {
+          $('#not_logged_in').hide();
+          $('#logged_in').show();
+
+          // Get my user id
+          _500px.api('/users', function (response) {
+            var me = response.data.user;
+            // Get my favorites
+            _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 5, page: $("#page").val(), user_id: me.id }, function (response) {
+                console.log(response);
+                $.each(response.data.photos, function () {
+                  $('#logged_in').append('<img src="' + this.image_url + '" />');
+                });
+                $("#page").val(parseInt($("#page").val())+1);
+            });
+          });
+        });
+
+       _500px.on('logout', function () {
+          $('#not_logged_in').show();
+          $('#logged_in').hide();
+          $('#logged_in').html('');
+        });
+
+        // If the user has already logged in & authorized your application, this will fire an 'authorization_obtained' event
+        _500px.getAuthorizationStatus();
+
+        // If the user clicks the login link, log them in
+        $('#login').click(_500px.login);
+      });
+    </script>
+
     <div class="menu">
       <div class="row-fluid">
         <div class="span10 offset1">
@@ -56,15 +112,24 @@
                    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                      <h3 id="myModalLabel">Modal header</h3>
+                      <h3 id="myModalLabel">Public Gallery <?php echo $_GET['term']; ?></h3>
                     </div>
                     <div class="modal-body">
-                     <input type="text">
-                     <button type="submit" class="btn">Search</button>
+                     <form name="search" id="search">
+                        <input type="text" class="awesome-field"name="term">
+                        <button type="submit" class="awesome-button3" onclick="return false">Search</button>
+                      </form>
+                      <div id="not_logged_in">
+                        <a href="#" id="login">Login to 500px</a>
+                      </div>
+                      <div id="logged_in" style="display: none;">
+                      </div>
+                      <div id="" style="" onclick="searchNext()">Search Next</div>
+                      <input id="page" type="hidden" name="page" value="1">
                     </div>
                     <div class="modal-footer">
-                      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                      <button class="btn btn-primary">Save changes</button>
+                      <button class="awesome-button3" data-dismiss="modal" aria-hidden="true">Close</button>
+                      <button class="awesome-button3">Save changes</button>
                     </div> <!--end modal !-->
                   </div>
                   </div>

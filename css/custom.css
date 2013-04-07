@@ -213,6 +213,59 @@ body p, h1, h2, h3, h4, h5 {
 	text-decoration:none;
 }
 
+.awesome-button3 {
+	margin-top:-10px;
+	color: black;
+	border: black;
+	border-radius:5px;
+	border-style: solid;
+	border-width: 2px;
+	padding: 5px 7px;
+	background:none;
+	margin-right:10px;
+}
+
+.awesome-button3:hover {
+	background: black;
+	border: black;
+	border-radius:5px;
+	border-style: solid;
+	border-width: 2px;
+	color:white;
+	text-decoration:none;
+}
+
+.awesome-field {
+	color: black !important;
+	border: black !important;
+	border-radius:5px;
+	border-style: solid !important;
+	border-width: 2px !important;
+	padding: 5px 7px;
+	background:none !important;
+	margin-right:10px;
+}
+
+.awesome-field:hover {
+	background: white !important;
+	border: black;
+	border-radius:5px;
+	border-style: solid;
+	border-width: 2px;
+	color:black !important;
+	text-decoration:none;
+	box-shadow:none !important;
+}
+
+.awesome-field:focus {
+	border:black !important;
+	border-width: 2px !important;
+	box-shadow:none !important;
+	border-style: solid !important;
+	color:white !important;
+	background: black !important;
+}
+
 #titleabout {
 	background-color: #e7e7e7;
 	padding: 15px 0px 15px 0px;
