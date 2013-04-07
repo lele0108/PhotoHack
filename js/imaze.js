@@ -111,3 +111,46 @@ function display(m) {
 	}
 	return text.join('');
 }
+
+var clickX = new Array();
+var clickY = new Array();
+var clickDrag = new Array();
+var paint;
+
+function addClick(x, y, dragging)
+{
+  clickX.push(x);
+  clickY.push(y);
+  clickDrag.push(dragging);
+}
+
+function redraw(){
+  canvas.width = canvas.width; // Clears the canvas
+
+  var context = canvas.getContext("2d");  
+  context.strokeStyle = "#df4b26";
+  context.lineJoin = "round";
+  context.lineWidth = 5;
+			
+  for(var i=0; i < clickX.length; i++)
+  {		
+    context.beginPath();
+    if(clickDrag[i] && i){
+      context.moveTo(clickX[i-1], clickY[i-1]);
+     }else{
+       context.moveTo(clickX[i]-1, clickY[i]);
+     }
+     context.lineTo(clickX[i], clickY[i]);
+     context.closePath();
+     context.stroke();
+  }
+}
+
+var drawPixel = function(snapshot) {
+  var coords = snapshot.name().split(":");
+  addClick(coords[0], coords[1]);
+  /*
+  myContext.fillStyle = "#" + snapshot.val();
+  myContext.fillRect(parseInt(coords[0]) * pixSize, parseInt(coords[1]) * pixSize, pixSize, pixSize);
+  */
+}
