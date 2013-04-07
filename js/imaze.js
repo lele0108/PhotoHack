@@ -1,3 +1,6 @@
+document.write("<script src='https://cdn.firebase.com/v0/firebase.js' type='text/javascript'></script>");
+document.write("<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js' type='text/javascript'></script>");
+
 function maze(x,y) {
 	var n=x*y-1;
 	if (n<0) {alert("illegal maze dimensions");return;}
@@ -62,6 +65,24 @@ function bitmap(m) {
 	return map;
 }
 
+function requestMultiplayerGame(url, maze, scale){
+    var d = new Date();
+	var n = d.getTime();
+	var randToken = n;
+	var myDataRef = new Firebase('https://z.firebaseio.com/'+randToken);
+	myDataRef.set({url: url, maze: JSON.stringify(maze), scale: scale});
+	return randToken;
+}
+
+function loadMaze(token){
+	var myDataRef = new Firebase('https://z.firebaseio.com/'+token);
+	myDataRef.on('child_added', function (snapshot) {
+	   var message = JSON.parse(snapshot.val());
+	});
+	var obj = jQuery.parseJSON(message);
+	return obj;
+}
+
 function scale(bitmap, scale) {
   var scaled = [];
   if (bitmap.length == 0)
@@ -112,45 +133,81 @@ function display(m) {
 	return text.join('');
 }
 
-var clickX = new Array();
-var clickY = new Array();
-var clickDrag = new Array();
-var paint;
-
-function addClick(x, y, dragging)
-{
-  clickX.push(x);
-  clickY.push(y);
-  clickDrag.push(dragging);
+function _isColor(pixel, color) {
+  return pixel[0] == color[0] && pixel[1] == color[1] && pixel[2] == color[2] && pixel[3] == color[3];
 }
 
-function redraw(){
-  canvas.width = canvas.width; // Clears the canvas
-
-  var context = canvas.getContext("2d");  
-  context.strokeStyle = "#df4b26";
-  context.lineJoin = "round";
-  context.lineWidth = 5;
-			
-  for(var i=0; i < clickX.length; i++)
-  {		
-    context.beginPath();
-    if(clickDrag[i] && i){
-      context.moveTo(clickX[i-1], clickY[i-1]);
-     }else{
-       context.moveTo(clickX[i]-1, clickY[i]);
-     }
-     context.lineTo(clickX[i], clickY[i]);
-     context.closePath();
-     context.stroke();
+function canMove(ctx, x, y, scale, myColor) {
+  var c = ctx.getImageData(x*scale, y*scale, 1, 1).data;
+  // can move on white squere
+  if (_isColor(c, [255,255,255,255])) {
+    // is neighbour pixel of myColour
+    var eq = 0;
+    // top
+    c = ctx.getImageData(x*scale, (y-1)*scale, 1, 1).data;    
+    if (_isColor(c, myColor)) {
+      eq++;
+    }
+    // right
+    c = ctx.getImageData((x+1)*scale, y*scale, 1, 1).data;    
+    if (_isColor(c, myColor)) {
+      eq++;
+    }
+    // bottom
+    c = ctx.getImageData(x*scale, (y+1)*scale, 1, 1).data;    
+    if (_isColor(c, myColor)) {
+      eq++;
+    }
+    // left
+    c = ctx.getImageData((x-1)*scale, y*scale, 1, 1).data;    
+    if (_isColor(c, myColor)) {
+      eq++;
+    }
+    return eq;
   }
+  return 0;
 }
 
-var drawPixel = function(snapshot) {
-  var coords = snapshot.name().split(":");
-  addClick(coords[0], coords[1]);
-  /*
-  myContext.fillStyle = "#" + snapshot.val();
-  myContext.fillRect(parseInt(coords[0]) * pixSize, parseInt(coords[1]) * pixSize, pixSize, pixSize);
-  */
+function pixelsToRemove(ctx, fromPixel, toPixel, scale) {
+  var removePixels = [];
+  if (fromPixel == null || toPixel == null) {
+    return removePixels;
+  }
+  
+  while (fromPixel[0] != toPixel[0] && fromPixel[1] != toPixel[1]) {
+    var x = fromPixel[0], y = fromPixel[1];
+    var t = ctx.getImageData(toPixel[0]*scale, toPixel[1]*scale, 1, 1).data;
+    removePixels.push(fromPixel);
+    // top
+    c = ctx.getImageData(x*scale, (y-1)*scale, 1, 1).data;    
+    if (_isColor(c, t)) {
+      fromPixel[0] = x;
+      fromPixel[1] = y-1;
+      continue;
+    }
+    // right
+    c = ctx.getImageData((x+1)*scale, y*scale, 1, 1).data;    
+    if (_isColor(c, t)) {
+      fromPixel[0] = x+1;
+      fromPixel[1] = y;
+      continue;
+    }
+    // bottom
+    c = ctx.getImageData(x*scale, (y+1)*scale, 1, 1).data;    
+    if (_isColor(c, t)) {
+      fromPixel[0] = x;
+      fromPixel[1] = y+1;
+      continue;
+    }
+    // left
+    c = ctx.getImageData((x-1)*scale, y*scale, 1, 1).data;    
+    if (_isColor(c, t)) {
+      fromPixel[0] = x-1;
+      fromPixel[1] = y;
+      continue;
+    }
+  }
+  return removePixels;
 }
+
+

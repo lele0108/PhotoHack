@@ -1,7 +1,6 @@
 <?php
   include_once "header.php";
 ?>
-    <script>$('#homepageimage').load('maze.php/?mazeImage=http://farm9.staticflickr.com/8319/7988784175_f662ddb020.jpg #mazehere');</script>
     <body>
     <div class="menu">
       <div class="row-fluid">
@@ -22,7 +21,7 @@
           <div class="span12">
             <div class="row-fluid">
               <div class="span12">
-                <div id="homepageimage"></div>
+                <iframe src="image.php/?mazeImage=http://farm9.staticflickr.com/8319/7988784175_f662ddb020.jpg" scrolling="no" width="100%" height="100%" align="center" ></iframe>
               </div>
             </div>
           </div>

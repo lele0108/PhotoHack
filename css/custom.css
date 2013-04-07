@@ -44,7 +44,6 @@ body p, h1, h2, h3, h4, h5 {
 	background-color:gray;
 	position:relative;
 	height:400px;
-	padding-top: 30px;
 }
 
 .upload {
@@ -101,10 +100,33 @@ body p, h1, h2, h3, h4, h5 {
 	padding-bottom:80px;
 }
 
+#features2 img {
+	margin: 0px 10px 10px 0px;
+}
+
 #features2 {
 	background-color:white;
 	padding-top:80px;
 	padding-bottom:80px;
+}
+
+#features2 h2 {
+	font-weight:100;
+}
+
+#features2 span {
+	font-weight:400;
+}
+
+
+#member {
+	background-color:#e7e7e7;
+	padding-top:80px;
+	padding-bottom:80px;
+}
+
+#members img {
+	margin-bottom:10px;
 }
 
 .signup {
@@ -169,3 +191,29 @@ body p, h1, h2, h3, h4, h5 {
 	color:white;
 }
 
+
+.awesome-button2 {
+	color: white;
+	border: white;
+	border-radius:10px;
+	border-style: solid;
+	border-width: 2px;
+	padding: 20px 30px;
+	background:none;
+	margin-right:10px;
+}
+
+.awesome-button2:hover {
+	background: white;
+	border: white;
+	border-radius:9px;
+	border-style: solid;
+	border-width: 2px;
+	color:black;
+	text-decoration:none;
+}
+
+#titleabout {
+	background-color: #e7e7e7;
+	padding: 15px 0px 15px 0px;
+}
