@@ -16,7 +16,7 @@
         _500px.api('/users', function (response) {
             var me = response.data.user;
             // Get my favorites
-            _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 5, page: $("#page").val(), user_id: me.id }, function (response) {
+            _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 6, page: $("#page").val(), user_id: me.id }, function (response) {
                 console.log(response);
                 $.each(response.data.photos, function () {
                   $('#logged_in').append('<img src="' + this.image_url + '" />');
@@ -40,7 +40,7 @@
           _500px.api('/users', function (response) {
             var me = response.data.user;
             // Get my favorites
-            _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 5, page: $("#page").val(), user_id: me.id }, function (response) {
+            _500px.api('/photos/search', { term: '<?php echo $_GET['term']; ?>', rpp: 6, page: $("#page").val(), user_id: me.id }, function (response) {
                 console.log(response);
                 $.each(response.data.photos, function () {
                   $('#logged_in').append('<img src="' + this.image_url + '" />');
@@ -117,19 +117,23 @@
                     <div class="modal-body">
                      <form name="search" id="search">
                         <input type="text" class="awesome-field"name="term">
-                        <button type="submit" class="awesome-button3" onclick="return false">Search</button>
+                        <button type="submit" class="awesome-button3">Search</button>
                       </form>
+                      <div class="fivepx">
                       <div id="not_logged_in">
                         <a href="#" id="login">Login to 500px</a>
                       </div>
                       <div id="logged_in" style="display: none;">
                       </div>
-                      <div id="" style="" onclick="searchNext()">Search Next</div>
                       <input id="page" type="hidden" name="page" value="1">
+
+                      <button id="" class="awesome-button3" style="text-align:left !important" onclick="searchNext()">Next</button>
+                    </div>
                     </div>
                     <div class="modal-footer">
                       <button class="awesome-button3" data-dismiss="modal" aria-hidden="true">Close</button>
                       <button class="awesome-button3">Save changes</button>
+                      </div>
                     </div> <!--end modal !-->
                   </div>
                   </div>

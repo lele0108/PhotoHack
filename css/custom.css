@@ -270,3 +270,8 @@ body p, h1, h2, h3, h4, h5 {
 	background-color: #e7e7e7;
 	padding: 15px 0px 15px 0px;
 }
+
+.fivepx img {
+	border-radius:0px !important;
+	margin-right:10px !important;
+}
