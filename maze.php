@@ -27,7 +27,7 @@
             
             // initialize moving      
             initializeCanvas(canvas, ctx, [255,0,0,255], token);
-            var $readyBtn = $('<a href="#" class="button">I\'m ready!</a>').click(function() {
+            var $readyBtn = $('<a href="#" class="button awesome-button">I\'m ready!</a>').click(function() {
               setReady(token, "player2", true);
             });
             $('.buttons').html($readyBtn);
@@ -36,7 +36,7 @@
           else if (snapshot.name() == 'ready') {
             var ready = snapshot.val();
             if (ready.player2) {
-              $('.buttons').html('<span>Waiting for player 1...</span>');
+              $('.buttons').html('<span class="awesome-button">Waiting for player 1...</span>');
               if (ready.player1) {
                 $('.buttons').hide();
                 // starting count down shuld goes here
@@ -65,7 +65,7 @@
               if (snapshot.name() == 'ready') {  
                 var ready = snapshot.val();
                 if (ready.player1) {
-                  $('.buttons').html('<span>Waiting for player 2...</span>');
+                  $('.buttons').html('<span class="awesome-button">Waiting for player 2...</span>');
                   if (ready.player2) {
                     $('.buttons').hide();
                     // starting count down shuld goes here
@@ -77,11 +77,11 @@
             
             // initialize moving      
             initializeCanvas(canvas, ctx, [0,255,0,255], token);
-            $('.buttons').html('<label for="url">Send the following URL to your opponent<br></label><input id="url" type="text" value="' + URI(window.location.href).search('token='+token) + '"</span><br><br>');
-            var $readyBtn = $('<a href="#" class="button">I\'m ready!</a>').click(function() {
+            $('.buttons').html('<div class="awesome-button" style="display: inline-block;"><label for="url">Send the following URL to your opponent<br></label><input id="url" type="text" value="' + URI(window.location.href).search('token='+token) + '"</span><br><br></div>');
+            var $readyBtn = $('<a href="#" class="button" style="color: #000; font-size: 120%;">I\'m ready!</a>').click(function() {
               setReady(token, "player1", true);
             });
-            $('.buttons').append($readyBtn);
+            $('.buttons > div').append($readyBtn);
             $readyBtn = null;
           }
           else {
