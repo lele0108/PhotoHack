@@ -14,6 +14,6 @@
 
 	<script type="text/javascript" src="//api.filepicker.io/v1/filepicker.js"></script>
     <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
   </body>
 </html>
