@@ -274,6 +274,10 @@ iframe {
 	padding: 15px 0px 15px 0px;
 }
 
+.fivepx div {
+	display:inline;
+}
+
 .fivepx img {
 	border-radius:0px !important;
 	margin-right:10px !important;

@@ -103,7 +103,6 @@ $_SESSION['to_maze'] = $timestamp;
   <div style="display: none;">
     <img id="user-image" src="<?php echo $_GET['mazeImage']; ?>" />
   </div>
-  <input id="button" type="submit" name="button" value="enter" onclick="myFunction();"/>
   <script>
     document.getElementById('button').onclick = function() {
    alert("button was clicked");
