@@ -5,7 +5,7 @@
 <script src="./js/500px.js"></script>
 <script type="text/javascript">
 	function linkToMaze(url){
-		window.location.href = "options.php/?mazeImage="+url;
+		window.location.href = "options.php?mazeImage="+url;
 	}
 
  
