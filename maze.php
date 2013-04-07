@@ -45,6 +45,20 @@
   //-->
   </script>
 <body>
+  <div class="menu">
+      <div class="row-fluid">
+        <div class="span10 offset1">
+        <div class="row-fluid">
+          <div class="span3">
+            <img src="/img/logo.png" width="50%" height="50%">
+          </div>
+          <div class="span3 offset6">
+            <p class="text-right"><a href="#" style="text-decoration:underline">HELLO</a> <a href="upload.php">GENERATE</a> <a href="about.php">ABOUT</a></p>
+          </div>
+        </div>
+        </div><!--end span10 offset1!-->
+      </div><!--end row fluid!-->
+      </div><!--end menu!-->
   <canvas id="maze" width="100" height="100"></canvas>
   <div style="display: none;">
     <img id="user-image" src="<?php echo $_GET['mazeImage']; ?>" />
