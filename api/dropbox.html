@@ -5,25 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.9.1/dropbox.min.js"></script>
-<script type="text/javascript">
-var client = new Dropbox.Client({
-    key: "so47sndp1ui8rzf", secret: "zf1mtxenfvxbqvm", sandbox: true
-});
-client.authDriver(new Dropbox.Drivers.Redirect());
-client.authenticate(function(error, client) {
-  if (error) {
-    return alert(error);
-  }		
-});
-client.getUserInfo(function(error, userInfo) {
-  if (error) {
-    return alert(error);  // Something went wrong.
-  }
+    <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js" id="dropboxjs" data-app-key="so47sndp1ui8rzf"></script>
 
-  alert("Hello, " + userInfo.name + "!");
-});
-</script>
 
   </head>
   <body>
