@@ -238,6 +238,28 @@ iframe {
 	text-decoration:none;
 }
 
+.awesome-button4 {
+	color: black;
+	border: black;
+	border-radius:5px;
+	border-style: solid;
+	border-width: 2px;
+	padding: 5px 7px;
+	background:none;
+	margin-right:10px;
+}
+
+.awesome-button4:hover {
+	background: black;
+	border: black;
+	border-radius:5px;
+	border-style: solid;
+	border-width: 2px;
+	color:white;
+	text-decoration:none;
+}
+
+
 .awesome-field {
 	color: black !important;
 	border: black !important;

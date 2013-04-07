@@ -70,16 +70,19 @@ function requestMultiplayerGame(url, maze, scale, readyFn){
 	var randToken = n + Math.random().toString().substr(2);
 	var myDataRef = new Firebase('https://z.firebaseio.com/'+randToken);
 	myDataRef.child('data').set(JSON.stringify({url: url, maze: maze, scale: scale}));
+  myDataRef.on('child_added', readyFn);
+  myDataRef.on('child_changed', readyFn);
+  
   myDataRef = new Firebase('https://z.firebaseio.com/'+randToken+'/ready');
   myDataRef.child('player1').set(false);
   myDataRef.child('player2').set(false);
-  myDataRef.on('child_added', readyFn);
 	return randToken;
 }
 
 function loadMaze(token, loadedFn){
 	var myDataRef = new Firebase('https://z.firebaseio.com/'+token);
 	myDataRef.on('child_added', loadedFn);
+  myDataRef.on('child_changed', loadedFn);
 }
 
 function setReady(token, player, isReady) {

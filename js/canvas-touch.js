@@ -24,20 +24,20 @@ function initializeCanvas(canvas, ctx, currentColor, firebaseToken) {
   
   if (firebaseToken) {
     //Create a reference to the pixel data for our drawing.
-    pixelDataRef = new Firebase('https://z.firebaseio.com/test-data');
+    pixelDataRef = new Firebase('https://z.firebaseio.com/'+firebaseToken+'/path');
   }
   else {
     pixelDataRef = null;
   }
   
   var addPixel = function(pos, color) {
+    if (jQuery.isArray(color)) {
+        color = HexConverter.dec2hex(color[0]) + HexConverter.dec2hex(color[1]) + HexConverter.dec2hex(color[2]);
+    }
     if (pixelDataRef != null) {
       pixelDataRef.child(pos).set(color);
     }
-    else {
-      if (jQuery.isArray(color)) {
-        color = HexConverter.dec2hex(color[0]) + HexConverter.dec2hex(color[1]) + HexConverter.dec2hex(color[2]);
-      }
+    else {      
       drawPixel({name: function() {return pos}, val: function() {return color} });
     }
   };
