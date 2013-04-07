@@ -5,11 +5,7 @@
     <!-- Load Feather code -->
 <script type="text/javascript" src="http://feather.aviary.com/js/feather.js"></script>
 <script type='text/javascript'>
-	function uploadToMaze(){
-		window.location.href = "../maze.php/?mazeImage="+$("#image").attr('src');
-	}
-
-   var featherEditor = new Aviary.Feather({
+var featherEditor = new Aviary.Feather({
        apiKey: 'R5ctaJYc7kSNYxrLjHSREg',
        apiVersion: 2,
        tools: 'all',
@@ -30,7 +26,11 @@
       return false;
    }
 </script>
-
+<script type="text/javascript">
+function uploadToMaze(){
+	window.location.href = "../maze.php/?mazeImage="+$("#image").attr('src');
+}
+</script>
     <div class="menu">
       <div class="row-fluid">
         <div class="span10 offset1">

@@ -5,13 +5,20 @@
   <script src="../js/imaze.js" type="text/javascript"></script>
   <?php 
 
-$imagecontent= file_get_contents($_GET['mazeImage']);
-echo $_GET['mazeImage'];
 $date = new DateTime();
 $timestamp = $date->getTimestamp();
-$savefile = fopen("img/customers/".$timestamp.".jpg", "w");
-fwrite($savefile, $imagecontent);
-fclose($savefile);
+$ch = curl_init ($_GET['mazeImage']);
+curl_setopt($ch, CURLOPT_HEADER, 0);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
+$raw=curl_exec($ch);
+curl_close ($ch);
+if(file_exists("img/customer/".$timestamp.".jpg")){
+	unlink("img/customer/".$timestamp.".jpg");
+}
+$fp = fopen("img/customer/".$timestamp.".jpg",'x');
+fwrite($fp, $raw);
+fclose($fp);
 
 $_SESSION['to_maze'] = $timestamp;
 
