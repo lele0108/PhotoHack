@@ -27,6 +27,7 @@
           <div class="span12">
             <div class="row-fluid">
               <div class="span10 offset1">
+              <h1 class="text-center">Upload and Play in Seconds</h1>
                 <div class="row-fluid">
 
                   <div class="span4">
