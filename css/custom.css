@@ -320,3 +320,10 @@ iframe {
 .options {
 	margin: 30px 0px 30px 0px;
 }
+
+.playbutton {
+font-family: sans-serif;
+font-size: 30px;
+margin-top: 10px;
+
+}

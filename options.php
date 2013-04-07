@@ -62,25 +62,20 @@ function uploadToMaze(){
 
         <div class="options">
           <div class="row">
-            <div class="span10 offset1">
+            
               <div class="row-fluid">
               <div class="text-center">
 
                 <div class="span4"><button class="awesome-button4" value='Edit photo' onclick="return launchEditor('image', '<?php echo $_GET['mazeImage'];?>');">Edit This Photo</button></div>
 
-<div class="btn-group" data-toggle="buttons-radio">
-  <button type="button" class="awesome-button4">Easy</button>
-  <button type="button" class="awesome-button4">Medium</button>
-  <button type="button" class="awesome-button4">Hard</button>
-</div>
+                <div class="span4"><div onclick="uploadToMaze()" class="awesome-button" ><p class="playbutton">Play Now!</p></div></div>
+                <div class="span4"><a href="/upload.php"><button class="awesome-button4">New Photo</button></a></div>
 
-                <div class="span4"><a href="/upload.php"><button class="awesome-button4">New Photo</button></a>
-                </div>
+                
 
                 </div>
               </div>
-              <center><br><br><br><div onclick="uploadToMaze()" class="awesome-button" >Play Now!</div></center><br>
-            </div>
+            
           </div>
       </div>
 <?php
