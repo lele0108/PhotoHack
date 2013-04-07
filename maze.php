@@ -3,26 +3,7 @@
 ?>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
   <script src="../js/imaze.js" type="text/javascript"></script>
-  <?php 
-
-$date = new DateTime();
-$timestamp = $date->getTimestamp();
-$ch = curl_init ($_GET['mazeImage']);
-curl_setopt($ch, CURLOPT_HEADER, 0);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
-$raw=curl_exec($ch);
-curl_close ($ch);
-if(file_exists("img/customer/".$timestamp.".jpg")){
-	unlink("img/customer/".$timestamp.".jpg");
-}
-$fp = fopen("img/customer/".$timestamp.".jpg",'x');
-fwrite($fp, $raw);
-fclose($fp);
-
-$_SESSION['to_maze'] = $timestamp;
-
-?>	
+<?php $_SESSION['to_maze'] = $_GET['mazeImage']; ?>	
 
   <script type="text/javascript">
   //<!--
@@ -103,6 +84,7 @@ $_SESSION['to_maze'] = $timestamp;
   <div style="display: none;">
     <img id="user-image" src="<?php echo $_GET['mazeImage']; ?>" />
   </div>
+  <input id="button" type="submit" name="button" value="enter" onclick="myFunction();"/>
   <script>
     document.getElementById('button').onclick = function() {
    alert("button was clicked");
