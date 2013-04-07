@@ -44,7 +44,8 @@
     });
   //-->
   </script>
-<body>
+<body style="text-align: center">
+  
  
     <canvas id="maze" width="100" height="100"></canvas>
   <div style="display: none;">
