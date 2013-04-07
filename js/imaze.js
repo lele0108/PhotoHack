@@ -128,6 +128,10 @@ function display(m) {
 	return text.join('');
 }
 
+function _isColor(pixel, color) {
+  return pixel[0] == color[0] && pixel[1] == color[1] && pixel[2] == color[2] && pixel[3] == color[3];
+}
+
 function canMove(ctx, x, y, scale, myColor) {
   var c = ctx.getImageData(x*scale, y*scale, 1, 1).data;
   // can move on white squere
@@ -159,6 +163,46 @@ function canMove(ctx, x, y, scale, myColor) {
   return 0;
 }
 
-function _isColor(pixel, color) {
-  return pixel[0] == color[0] && pixel[1] == color[1] && pixel[2] == color[2] && pixel[3] == color[3];
+function pixelsToRemove(ctx, fromPixel, toPixel, scale) {
+  var removePixels = [];
+  if (fromPixel == null || toPixel == null) {
+    return removePixels;
+  }
+  
+  while (fromPixel[0] != toPixel[0] && fromPixel[1] != toPixel[1]) {
+    var x = fromPixel[0], y = fromPixel[1];
+    var t = ctx.getImageData(toPixel[0]*scale, toPixel[1]*scale, 1, 1).data;
+    removePixels.push(fromPixel);
+    // top
+    c = ctx.getImageData(x*scale, (y-1)*scale, 1, 1).data;    
+    if (_isColor(c, t)) {
+      fromPixel[0] = x;
+      fromPixel[1] = y-1;
+      continue;
+    }
+    // right
+    c = ctx.getImageData((x+1)*scale, y*scale, 1, 1).data;    
+    if (_isColor(c, t)) {
+      fromPixel[0] = x+1;
+      fromPixel[1] = y;
+      continue;
+    }
+    // bottom
+    c = ctx.getImageData(x*scale, (y+1)*scale, 1, 1).data;    
+    if (_isColor(c, t)) {
+      fromPixel[0] = x;
+      fromPixel[1] = y+1;
+      continue;
+    }
+    // left
+    c = ctx.getImageData((x-1)*scale, y*scale, 1, 1).data;    
+    if (_isColor(c, t)) {
+      fromPixel[0] = x-1;
+      fromPixel[1] = y;
+      continue;
+    }
+  }
+  return removePixels;
 }
+
+
