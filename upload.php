@@ -59,7 +59,6 @@
                       <h3 id="myModalLabel">Modal header</h3>
                     </div>
                     <div class="modal-body">
-                      
                      <input type="text">
                      <button type="submit" class="btn">Search</button>
                     </div>
