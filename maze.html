@@ -50,7 +50,7 @@
       ctx.fillRect( iscale, 0, iscale, iscale );
       
       //Set up some globals
-      var pixSize = iscale, lastPoint = null, currentColor = "0f0", mouseDown = 0;
+      var pixSize = iscale, lastPoint = null, lastPlaced = null, currentColor = "0f0", mouseDown = 0;
   
       //Create a reference to the pixel data for our drawing.
       var pixelDataRef = new Firebase('https://z.firebaseio.com/test-data');
@@ -86,7 +86,17 @@
         
         var neighbours = canMove(ctx, x1, y1, pixSize, [0,255,0,255]);
         if (neighbours > 0) {
+            //pixelDataRef.child(x0 + ":" + y0).set(currentColor);
             drawPixel({name: function() {return x1 + ":" + y1}, val: function() {return currentColor === "fff" ? null : currentColor} });
+            
+            if (neighbours > 1) {
+              removePixels = pixelsToRemove(ctx, lastPlaced, [x1,y1], pixSize);
+              for (var i=0; i<removePixels.length; i++) {
+                  //pixelDataRef.child(x0 + ":" + y0).set(null);
+                  clearPixel({name: function() {return removePixels[i][0] + ":" + removePixels[i][1]}});                
+              }
+            }
+            lastPlaced = [x1, y1];
         }
         
         /*
