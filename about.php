@@ -36,23 +36,20 @@
         </div><!--end row fluid!-->
         <div id="features1">
         <div class="row-fluid">
-          <div class="span4 offset1">
-            <h2>Team</h2>
-            <div class="span3"><img src="/img/image1.jpg"><div>
-            <p>Boris Suska: backend developer</p>
-            <p>  Zbynek Nedoma: backend developer</p>
-            <p> Jimmy Liu: front end designer</p>
-            <p> Danish Shaik: front end designer</p>
-            <p> Zuhayeer Musa: backend developer</p>
+          <div class="span10 offset1">
+            
+            <div class="row-fluid">
+              <div class="span2"><h2>Team</h2></div>
+              <div class="span2"><img src="/img/danish.jpg"><p>Danish Shaik: Front end designer</p></div>
+              <div class="span2"><img src="/img/zuhayeer.jpg"><p>Zuhayeer: Back End pHp Developer</p></div>
+              <div class="span2"><img src="/img/jimmy.jpg"><p>Jimmy Liu: Front End Designer</p></div>
+              <div class="span2"><img src="/img/boris.jpg"><p>Boris Suska: Back End Developer JavaScript</p></div>
+              <div class="span2"><img src="/img/zbynek.jpg"><p>Zbynek Nedoma: Back End Developer JavaScript</p></div>
 
-
+            </div>
 
             </p>
           </div><!--end span10 offset1!-->
-
-          <div class="span4 offset2">
-          <img src="http://placehold.it/350x150">
-          </div>
 
           </div><!--row fluid!-->
           </div>

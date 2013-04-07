@@ -45,43 +45,10 @@
   //-->
   </script>
 <body>
-  <div class="menu">
-      <div class="row-fluid">
-        <div class="span10 offset1">
-        <div class="row-fluid">
-          <div class="span3">
-            <img src="/img/logo.png" width="50%" height="50%">
-          </div>
-          <div class="span3 offset6">
-            
-            <p class="text-right"><a href="/index.php">HELLO</a> <a href="/upload.php" style="text-decoration:underline">GENERATE</a> <a href="/about.php">ABOUT</a> </p>
-            
-          </div>
-        </div>
-        </div><!--end span10 offset1!-->
-      </div><!--end row fluid!-->
-      </div><!--end menu!-->
-
-  <div class="title">
-    <div class="row-fluid">
-      <div class="span10 offset1">
-        <h1 class="text-center">Title of Image</h1>
-        <p class="text-center">Timer: 0:01</p>
-      </div>
-    </div>
-  </div>
-  <div class="maze">
-  <div class="row">
-  <div class="span10 offset1">
-  <div id="mazehere">
+ 
     <canvas id="maze" width="100" height="100"></canvas>
-  </div>
-  </div>
-  </div>
-  </div>
   <div style="display: none;">
     <img id="user-image" src="<?php echo $_GET['mazeImage']; ?>" />
   </div>
-<?php
-  include_once "footer.php";
-?>
+  </body>
+  </html>

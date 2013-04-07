@@ -31,7 +31,7 @@
                 <div class="row-fluid">
 
                   <div class="span4">
-                    <center><img src="img/image.png" type="filepicker" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="filepickerUploadDone(event.fpfile.url)"></center>
+                    <center><img src="img/image.png"></center>
                     <p class="text-center">1. Pick image you want</p>
                   </div>
 
@@ -42,7 +42,7 @@
 
                   <div class="span4">
                     <center><img src="img/photo2.png" style="border-radius:0px"></center>
-                    <p class="text-center">3. Play!</p>
+                    <p class="text-center">3. Play!</p>c
                   </div>
 
                 </div>
@@ -50,6 +50,7 @@
                   <!-- Button to trigger modal -->
                   <center>                   
                   	<input type="filepicker" class="awesome-button" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="filepickerUploadDone(event.fpfile.url)">
+                    <a href="#modal" class="awesome-button">Public Gallery</a>
                   </center>
                   </div>
               </div>
