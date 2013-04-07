@@ -4,9 +4,7 @@
     <body>
 <script type="text/javascript">
 	function filepickerUploadDone(url){
-
-		//$('#maze').load('maze.html');
-		window.location.href = "maze.html/?mazeImg="+url;
+		window.location.href = "maze.php/?mazeImage="+url;
 	}
 
 </script>    
