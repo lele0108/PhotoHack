@@ -6,6 +6,16 @@ body p, h1, h2, h3, h4, h5 {
 	font-family: 'Open Sans', sans-serif;
 }
 
+@media (max-width: 480px) { 
+	.features h1, p, h2, img{
+		padding: 0px 2em 0px 2em;
+	}
+
+	.signup h1 {
+		padding: 0em 2em 0em 2em;
+	}	
+}
+
 .menu {
 	margin-top: 0px;
 	background-color:white;
