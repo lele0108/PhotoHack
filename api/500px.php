@@ -12,6 +12,7 @@
 		_500px.init({
 	    	sdk_key: '9920bb2b69c7f071b25edeb643cc70d9c98373cc'
 	    });
+
 		_500px.api('/users', function (response) {
 	          var me = response.data.user;
 			  
@@ -72,7 +73,10 @@
 
     <h1>Your 500px favorite photos</h1>
 
-    <div id="show" onclick="show()"></div>
+    <div id="show" onclick="show()">Show photos</div>
+        <div id="not_logged_in">
+      <a href="#" id="login">Login to 500px</a>
+    </div>
     <div id="logged_in" style="display: none;">
     </div>
   </body>
