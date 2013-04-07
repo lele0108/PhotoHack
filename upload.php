@@ -31,17 +31,17 @@
 
                   <div class="span4">
                     <center><img src="img/photo.jpg"></center>
-                    <p class="text-center">Pick image you want</p>
+                    <p class="text-center">1. Pick image you want</p>
                   </div>
 
                   <div class="span4">
                     <center><img src="img/photo.png" style="opacity:0.8"></center>
-                    <p class="text-center">Edit to what you want</p>
+                    <p class="text-center">2. Edit to what you want</p>
                   </div>
 
                   <div class="span4">
                     <center><img src="img/photo2.png" style="border-radius:0px"></center>
-                    <p class="text-center">Play!</p>
+                    <p class="text-center">3. Play!</p>
                   </div>
 
                 </div>
