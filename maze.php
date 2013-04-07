@@ -54,7 +54,7 @@
           </div>
           <div class="span3 offset6">
             
-            <p class="text-right"><a href="/index.php">HELLO</a> <a href="/upload.php" style="text-decoration:underline">GENERATE</a> <a href="/about.php">ABOUT</a> </p>
+            <p class="text-right"><a href="/index.php">HELLO</a> <a href="/upload.php"><b>GENERATE</b></a> <a href="/about.php">ABOUT</a> </p>
             
           </div>
         </div>
