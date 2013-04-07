@@ -51,6 +51,13 @@ body p, h1, h2, h3, h4, h5 {
 	padding-bottom:50px;
 }
 
+.maze {
+	background-color:gray;
+	position:relative;
+	height:600px;
+	padding-top: 30px;
+}
+
 .upload img {
 	text-align:center;
 	border-radius: 150px;
@@ -119,4 +126,18 @@ body p, h1, h2, h3, h4, h5 {
 .button-link:hover {
 	color: #fff;
 	background:#5c8bc4;
+}
+
+.title {
+	background-color:#e7e7e7;
+	padding: 15px 0px 15px 0px;
+}
+
+.title h1 {
+	font-weight:100;
+}
+
+.info {
+	background-color:#aaa;
+	padding: 5px 0px 5px 0px;
 }
