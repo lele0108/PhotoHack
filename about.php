@@ -10,7 +10,7 @@
             <p>iMaze</p>
           </div>
           <div class="span3 offset6">
-            <p class="text-right"><a href="#" style="text-decoration:underline">HELLO</a> <a href="upload.php">GENERATE</a> <a href="about.php">ABOUT</a></p>
+            <p class="text-right"><a href="index.php">HELLO</a> <a href="upload.php">GENERATE</a> <a href="#" style="text-decoration:underline">ABOUT</a></p>
           </div>
         </div>
         </div><!--end span10 offset1!-->
