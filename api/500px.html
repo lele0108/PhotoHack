@@ -10,13 +10,14 @@
     	function search(){
     		
     	    _500px.api('photos/search', {term: 'sport', rpp: '20'}, function (response) {
-                if (response.data.photos.length == 0) {
-                  alert('You have no favorite photos.');
-                } else {
-                  $.each(response.data.photos, function () {
-                    $('#logged_in').append('<img src="' + this.image_url + '" />');
-                  });
-                }
+    	    	console.log(response);
+//                 if (response.data.photos.length == 0) {
+//                   alert('You have no favorite photos.');
+//                 } else {
+//                   $.each(response.data.photos, function () {
+//                     $('#logged_in').append('<img src="' + this.image_url + '" />');
+//                   });
+//                 }
               });
     		
     	}
@@ -26,30 +27,6 @@
           sdk_key: '9920bb2b69c7f071b25edeb643cc70d9c98373cc'
         });
 
-
-  //      _500px.on('authorization_obtained', function () {
-    //      $('#not_logged_in').hide();
-      //    $('#logged_in').show();
-
-        //  _500px.api('/users', function (response) {
-          //  var me = response.data.user;
-
-            // Get my favorites
-            
-         // });
-       // });
-
-       // _500px.on('logout', function () {
-       //   $('#not_logged_in').show();
-       //   $('#logged_in').hide();
-       //   $('#logged_in').html('');
-       // });
-
-        // If the user has already logged in & authorized your application, this will fire an 'authorization_obtained' event
-    //    _500px.getAuthorizationStatus();
-
-        // If the user clicks the login link, log them in
-     //   $('#login').click(_500px.login);
       });
     </script>
 
