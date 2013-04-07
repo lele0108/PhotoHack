@@ -55,8 +55,8 @@
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
-            <h2>Feature One</h2>
-            <p>Kitty ipsum dolor sit amet, bat chuf eat kittens meow sunbathe, lay down in your way eat the grass toss the mousie claw purr. Stuck in a tree stretching puking attack, hiss sleep in the sink give me fish run sniff.</p>
+            <h2>Easy Imports</h2>
+            <p>Easily import your images from a variety of online services such as FaceBook, DropBox, Flickr, Instagram, etc. Or choose a picture on your computer, take a webcam pic, or one from our public gallery.</p>
           </div>
 
           </div><!--row fluid!-->
@@ -65,8 +65,8 @@
         <div id="features1">
         <div class="row-fluid">
           <div class="span4 offset1">
-            <h2>Custom Mazes</h2>
-            <p>Upload your images and we will generate stunning mazes for you to solve with your friends. The image will be the basis for the image and it is a ton of fun to play with friends when your bored.</p>
+            <h2>Play with Friends</h2>
+            <p>Looking to compete against your friends? No problem. Compete in real time with your friends, even on different devices. Be able to see your opponenets progress, and win awesome prizes.</p>
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
