@@ -149,7 +149,7 @@
   <div class="row">
     <div class="maze-wrap">
       <div class="buttons">
-        <div id="single-player" class="awesome-button"><p class="playbutton">Sigle player</p></div>
+        <div id="single-player" class="awesome-button"><p class="playbutton">Single player</p></div>
         <div id="competition" class="awesome-button"><p class="playbutton">Competition</p></div>
         <!--
           <a id="single-player" class="button" href="#">Sigle player</a>
