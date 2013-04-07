@@ -59,7 +59,9 @@
                       <h3 id="myModalLabel">Modal header</h3>
                     </div>
                     <div class="modal-body">
-                      <p>One fine body…</p>
+                      
+                     <input type="text">
+                     <button type="submit" class="btn">Search</button>
                     </div>
                     <div class="modal-footer">
                       <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
