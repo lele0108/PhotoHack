@@ -2,19 +2,17 @@
   include_once "header.php";
 ?>
     <body>
+<script src="../js/500px.js"></script>
 <script type="text/javascript">
-	function filepickerUploadDone(url){
+	function linkToMaze(url){
 		window.location.href = "maze.php/?mazeImage="+url;
 	}
 
-</script> 
-<script src="../js/500px.js"></script>
- <script>
-      function searchNext(){
+	function searchNext(){
           _500px.api('/photos/search', { term: $("#searchInput").val(), rpp: 6, page: $("#page").val(), user_id: 3007733 }, function (response) {
               $("#logged_in").empty();
               $.each(response.data.photos, function () {
-                $('#logged_in').append('<img src="' + this.image_url + '" />');
+                $('#logged_in').append('<span onclick="linkToMaze('.(this.image_url.replace('2.jpg','4.jpg')).')"><img src="' + this.image_url + '" />');
               });
           });
           $("#page").val(parseInt($("#page").val())+1); 
@@ -25,7 +23,7 @@
         _500px.api('/photos/search', { term: $("#searchInput").val(), rpp: 6, page: $("#page").val(), user_id: 3007733 }, function (response) {
           $("#logged_in").empty();
               $.each(response.data.photos, function () {
-                $('#logged_in').append('<img src="' + this.image_url + '" />');
+            	  $('#logged_in').append('<span onclick="linkToMaze('.(this.image_url.replace('2.jpg','4.jpg')).')"><img src="' + this.image_url + '" />');
               });
           });
           $("#page").val(parseInt($("#page").val())+1); 
@@ -79,7 +77,7 @@
                   <br><br>
                   <!-- Button to trigger modal -->
                   <center>                   
-                  	<input type="filepicker" class="awesome-button2" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="filepickerUploadDone(event.fpfile.url)">
+                  	<input type="filepicker" class="awesome-button2" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="linkToMaze(event.fpfile.url)">
                     <a href="#myModal" role="button" data-toggle="modal" class="awesome-button2">Public Gallery</a>
 
                   </center>
