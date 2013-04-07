@@ -2,7 +2,7 @@
   include_once "header.php";
 ?>
     <body>
-<script src="../js/500px.js"></script>
+<script src="./js/500px.js"></script>
 <script type="text/javascript">
 	function linkToMaze(url){
 		window.location.href = "options.php/?mazeImage="+url;

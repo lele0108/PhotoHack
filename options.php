@@ -28,7 +28,7 @@ var featherEditor = new Aviary.Feather({
 </script>
 <script type="text/javascript">
 function uploadToMaze(){
-	window.location.href = "../maze.php/?mazeImage="+$("#image").attr('src');
+	window.location.href = "./maze.php?mazeImage="+$("#image").attr('src');
 }
 </script>
     <div class="menu">
@@ -36,7 +36,7 @@ function uploadToMaze(){
         <div class="span10 offset1">
         <div class="row-fluid">
           <div class="span3">
-            <img src="/img/logo.png" width="50%" height="50%">
+            <img src="./img/logo.png" width="50%" height="50%">
           </div>
           <div class="span3 offset6">
             <p class="text-right"><a href="index.php">HELLO</a> <a href="upload.php"><b>GENERATE</b></a> <a href="about.php">ABOUT</a></p>
