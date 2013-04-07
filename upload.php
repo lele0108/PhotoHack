@@ -2,7 +2,14 @@
   include_once "header.php";
 ?>
     <body>
-    
+<script type="text/javascript">
+	function filepickerUploadDone(url){
+
+		//$('#maze').load('maze.html');
+		window.location.href = "maze.html/?mazeImg="+url;
+	}
+
+</script>    
     <div class="menu">
       <div class="row-fluid">
         <div class="span10 offset1">
@@ -11,7 +18,7 @@
             <p>iMaze</p>
           </div>
           <div class="span3 offset6">
-            <p class="text-right"><a href="#">HELLO</a> <a href="#">GENERATE</a> <a href="#">ABOUT</a></p>
+            <p class="text-right"><a href="index.php">HELLO</a> <a href="upload.php">GENERATE</a> <a href="#">ABOUT</a></p>
           </div>
         </div>
         </div><!--end span10 offset1!-->
@@ -42,24 +49,9 @@
                 </div>
                   <br><br>
                   <!-- Button to trigger modal -->
-                  <center>
-                  	<a href="#myModal" role="button" class="btn" data-toggle="modal">Pick Image</a>                      
-                  	<input type="filepicker" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="alert(event.fpfile.url)">
-                  </center>
-                   
-                  <!-- Modal -->
-                  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-header">
-                      <button type="button" onclick="openFilePicker()" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                      <h3 id="myModalLabel" >Getting a Image</h3>
-                    </div>
-                    <div class="modal-body">
-                      <p>One fine body…</p>
-                    </div>
-                    <div class="modal-footer">
-                      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                      <button class="btn btn-primary">Save changes</button>
-                    </div> <!-- end modal !-->
+                  <center>                   
+                  	<input type="filepicker" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="filepickerUploadDone(event.fpfile.url)">
+                  </center>                   
                   </div>
               </div>
             </div>
