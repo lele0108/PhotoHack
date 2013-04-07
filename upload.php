@@ -50,9 +50,14 @@
                   <br><br>
                   <!-- Button to trigger modal -->
 <<<<<<< HEAD
+<<<<<<< HEAD
                   <center>
                   	<a href="#myModal" role="button" class="btn" data-toggle="modal">Pick Image</a>                      
                   	<input type="filepicker" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="filepickerUploadDone(event.fpfile.url)">
+=======
+                  <center>                     
+                  	<input type="filepicker" class="button-link" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="alert(event.fpfile.url)">
+>>>>>>> fcd148798c986cccd96a35bf3dfc1e5f9c90ddda
 =======
                   <center>                     
                   	<input type="filepicker" class="button-link" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="alert(event.fpfile.url)">
