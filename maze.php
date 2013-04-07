@@ -53,7 +53,9 @@
             <img src="/img/logo.png" width="50%" height="50%">
           </div>
           <div class="span3 offset6">
+            <div class="mazehere">
             <p class="text-right"><a href="/index.php">HELLO</a> <a href="/upload.php" style="text-decoration:underline">GENERATE</a> <a href="/about.php">ABOUT</a> </p>
+            </div>
           </div>
         </div>
         </div><!--end span10 offset1!-->
