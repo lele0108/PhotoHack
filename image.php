@@ -2,7 +2,7 @@
   include_once "header.php";
 ?>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
-  <script src="../js/imaze.js" type="text/javascript"></script>	
+  <script src="./js/imaze.js" type="text/javascript"></script>	
   <script type="text/javascript">
   //<!--
     $(window).load(function() {
@@ -48,11 +48,11 @@
 <body style="text-align: center">
 
     <div id ="mazeresize" role="mazeresize">
-    <canvas id="maze" width="100" height="100"></canvas>
+      <canvas id="maze" width="100" height="100"></canvas>
     </div>
 
-  <div style="display: none;">
-    <img id="user-image" src="<?php echo $_GET['mazeImage']; ?>" />
-  </div>
+    <div style="display: none;">
+      <img id="user-image" src="<?php echo $_GET['mazeImage']; ?>" />
+    </div>
   </body>
-  </html>
+</html>

@@ -3,12 +3,13 @@
 ?> 
 <script>
 $(document).ready( function(){
-    //Get the canvas &
-    context var c = $('#respondCanvas');
-    var ct = c.get(0).getContext('2d');
-    var container = $(c).parent();
+    //Get the canvas & context
+    // var c = $('#respondCanvas');
+    // var ct = c.get(0).getContext('2d');
+    // var container = $(c).parent();
 
     //Run function when browser resizes
+    /*
     $(window).resize( respondCanvas );
 
     function respondCanvas(){ 
@@ -17,9 +18,10 @@ $(document).ready( function(){
 
         //Call a function to redraw other content (texts, images etc)
     }
+    */  
 
     //Initial call 
-    respondCanvas();
+    //respondCanvas();
 
 }); </script>
     <body>
@@ -53,7 +55,7 @@ $(document).ready( function(){
           <div class="span12">
             <div class="row-fluid">
               <div class="span12">
-                <iframe src="image.php/?mazeImage=http://farm9.staticflickr.com/8319/7988784175_f662ddb020.jpg" border="none" scrolling="no" width="100%" height="100%" align="center" ></iframe>
+                <iframe src="image.php?mazeImage=http://farm9.staticflickr.com/8319/7988784175_f662ddb020.jpg" border="none" scrolling="no" width="100%" height="100%" align="center" ></iframe>
               </div>
             </div>
           </div>
@@ -76,7 +78,7 @@ $(document).ready( function(){
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
-          <img src="/img/custom.gif">
+          <img src="./img/custom.gif">
           </div>
 
           </div><!--row fluid!-->
@@ -85,7 +87,7 @@ $(document).ready( function(){
         <div id="features2">
         <div class="row-fluid">
           <div class="span4 offset1">
-             <img src="/img/imports.gif">
+             <img src="./img/imports.gif">
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
@@ -104,7 +106,7 @@ $(document).ready( function(){
           </div><!--end span10 offset1!-->
 
           <div class="span4 offset2">
-          <img src="/img/gamewithfriends.jpg">
+          <img src="./img/gamewithfriends.jpg">
           </div>
 
           </div><!--row fluid!-->
