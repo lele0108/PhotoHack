@@ -15,7 +15,7 @@ var HexConverter = {
 	}
 }
 
-function initializeCanvas(canvas, ctx, currentColor, firebaseToken) {
+function initializeCanvas(canvas, ctx, endOfGameCallback, currentColor, firebaseToken) {
   var pixelDataRef;
 
   if (!currentColor) {
@@ -71,7 +71,7 @@ function initializeCanvas(canvas, ctx, currentColor, firebaseToken) {
     if (neighbours.count > 0) {
         // check the finish
         if (neighbours.finished) {
-          $canvas.animate({opacity: 0});
+          endOfGameCallback({me:10, opponent:5});
           return;
         }
     
