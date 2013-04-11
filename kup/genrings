@@ -1,0 +1,114 @@
+#!/usr/bin/perl
+## -----------------------------------------------------------------------
+##
+##   Copyright 2011 Intel Corporation; author: H. Peter Anvin
+##
+##   This program is free software; you can redistribute it and/or
+##   modify it under the terms of the GNU General Public License as
+##   published by the Free Software Foundation, Inc.; either version 2
+##   of the License, or (at your option) any later version;
+##   incorporated herein by reference.
+##
+## -----------------------------------------------------------------------
+
+#
+# Take a text file and an single gpg ring and separate out
+# authorized key rings into separate files.
+#
+# The format of the input file is:
+# username key_id other_fields
+#
+
+use strict;
+use warnings;
+use File::Temp qw(tempdir);
+
+my ($input, $outdir) = @ARGV;
+
+if (!defined($outdir)) {
+    die "Usage: $0 input_file output_dir\n";
+}
+
+my $gpg = 'gpg';
+
+if (! -d $outdir) {
+    mkdir($outdir)
+	or die "$0: cannot create output directory $outdir: $!\n";
+}
+
+my $tmpdir = tempdir(CLEANUP => 1);
+if (!defined($tmpdir) || ! -d $tmpdir) {
+    die "$0: failed to create temporary directory\n";
+}
+
+my $in;
+open($in, '<', $input)
+    or die "$0: cannot open: $in: $!\n";
+
+my %keys = ();
+
+my $line;
+while (defined($line = <$in>)) {
+    next if ($line !~ /^([A-Za-z0-9_.-]+)\s+([0-9a-fA-F]+)/);
+
+    my $username = $1;
+    my $keyid = $2;
+
+    my @keyids = ();
+    open(my $gpgfd, '-|',
+	 $gpg, '--fixed-list-mode', '--with-colons', '--list-keys',
+	 '--with-fingerprint', '--with-fingerprint', $keyid)
+	or die "$0: failed to run gpg\n";
+    my $gl;
+    my $fprok = 0;
+    while (defined($gl = <$gpgfd>)) {
+	my @gf = split(/\:/, $gl);
+
+	if ($fprok && $gf[0] eq 'fpr') {
+	    # This is the actual fingerprint we wanted
+	    push(@keyids, $gf[9]);
+	    $fprok = 0;
+	} else {
+	    $fprok = 0;
+
+	    # Key must be a public key
+	    next if ($gf[0] ne 'pub');
+
+	    # Skip keys that are:
+	    # i - invalid
+	    # d - disabled
+	    # r - revoked
+	    # e - expired
+	    # o - unknown
+	    # D (in field 12) - disabled
+	    next if ($gf[1] =~ /[idreo]/ || $gf[11] =~ /D/);
+
+	    # XXX: What should be enforced for field 12?
+
+	    $fprok = 1;
+	}
+    }
+    close($gpgfd);
+
+    if (scalar(@keyids)) {
+	my $n = ++$keys{$username};
+	system($gpg, '-o', "${tmpdir}/${username}.${n}.key",
+	       '--export-options', 'export-local-sigs,export-minimal',
+	       '--export', @keyids);
+    }
+}
+
+close($in);
+
+foreach my $username (keys(%keys)) {
+    my $n = $keys{$username};
+    my @i = ();
+    for (my $i = 1; $i <= $n; $i++) {
+	push(@i, "${tmpdir}/${username}.${i}.key");
+    }
+    system($gpg, '--homedir', $tmpdir,
+	   '--no-default-keyring',
+	   '--primary-keyring', "${outdir}/${username}.gpg",
+	   '--import', @i);
+    unlink("${outdir}/${username}.gpg~");
+}

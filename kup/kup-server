@@ -1,0 +1,1301 @@
+#!/usr/bin/perl -T
+## -----------------------------------------------------------------------
+##
+##   Copyright 2011 Intel Corporation; author: H. Peter Anvin
+##
+##   This program is free software; you can redistribute it and/or
+##   modify it under the terms of the GNU General Public License as
+##   published by the Free Software Foundation, Inc.; either version 2
+##   of the License, or (at your option) any later version;
+##   incorporated herein by reference.
+##
+## -----------------------------------------------------------------------
+
+#
+# This script should be run with the permissions of the user that
+# is uploading files.
+#
+# Arguments are whitespace-separated and URL-escaped; a single % means
+# a null argument.
+#
+# It accepts the following commands:
+#
+# DATA byte-count
+#		- receives a new data blob (follows immediately)
+# TAR git-tree tree-ish prefix
+#		- generate a data blob from a git tree (git archive)
+# DIFF git-tree tree-ish tree-ish
+#		- generate a data blob as a git tree diff
+# SIGN byte-count
+#		- updates the current signature blob (follows immediately)
+# PUT pathname
+#		- installs the current data blob as <pathname>
+# MKDIR pathname
+#		- creates a new directory
+# MOVE old-path new-path
+#		- moves <old-path> to <new-path>
+# LINK old-path new-path
+#		- hard links <old-path> to <new-path>
+# DELETE old-path
+#		- removes <old-path>
+# DIR path
+#		- lists the contents of <path> on stdout; must be a directory
+# DONE
+#		- optional command, terminates transaction
+#
+# For future consideration:
+#
+# SYMLINK old-path:new-path
+#		- symlinks <old-path> to <new-path>
+#
+
+use strict;
+use warnings;
+use bytes;
+use Encode qw(encode decode);
+use IPC::Open2 qw(open2);
+use Config::Simple;
+
+use File::Temp qw(tempdir);
+use File::Path qw(make_path);
+use BSD::Resource;
+use Fcntl qw(:DEFAULT :flock :mode);
+use POSIX;
+use IO::Handle;
+
+use Sys::Syslog qw(:standard :macros);
+use Git;
+
+use Digest::SHA;
+
+# Scrub the environment completely
+%ENV = ('PATH' => '/bin:/usr/bin',
+		'LANG' => 'C',
+		'SHELL' => '/bin/false'); # Nothing in this program should shell out
+
+# The standard function to call on bail
+sub fatal($) {
+	no bytes;
+
+	my($msg) = @_;
+
+	$msg =~ s/[\x{0000}-\x{001f}\x{007f}-\x{00a0}\x{fffd}-\x{ffff}]/ /g;
+
+	syslog(LOG_CRIT, "%s", $msg);
+	die $msg."\n";
+}
+
+sub my_username() {
+	my $whoami = getuid();
+	my ($name,$passwd,$uid,$gid,$quota,$comment,$gcos,$dir,$shell,$expire) = getpwuid($whoami);
+
+	if (!defined($name) || $whoami != $uid) {
+		# We haven't called openlog() yet so we need to do it here
+		openlog("kup-server($whoami)", 'ndelay,pid', LOG_LOCAL5);
+		fatal("You don't exist, go away!");
+	}
+
+	return (defined($name) && $whoami == $uid) ? $name : $whoami;
+}
+
+my $user_name = my_username();
+
+openlog("kup-server($user_name)", 'ndelay,pid', LOG_LOCAL5);
+
+
+# Get config values from kup-server.cfg
+my $cfg_file = '/etc/kup/kup-server.cfg';
+
+my $cfg = new Config::Simple($cfg_file);
+
+if (!defined($cfg)) {
+	fatal('Error reading config file: '.$cfg_file);
+}
+
+my $data_path = $cfg->param('paths.data_path');
+my $git_path  = $cfg->param('paths.git_path');
+my $lock_file = $cfg->param('paths.lock_file');
+my $tmp_path  = $cfg->param('paths.tmp_path');
+my $pgp_path  = $cfg->param('paths.pgp_path');
+
+my $max_data = int($cfg->param('limits.max_data'));
+my $bufsiz   = int($cfg->param('limits.bufsiz'));
+
+my $timeout_command      = int($cfg->param('limits.timeout_command'));
+my $timeout_data         = int($cfg->param('limits.timeout_data'));
+my $timeout_compress     = int($cfg->param('limits.timeout_compress'));
+my $timeout_compress_cpu = int($cfg->param('limits.timeout_compress_cpu'));
+
+# Make sure the user can't create insanely large files
+setrlimit(RLIMIT_FSIZE, $max_data, $max_data);
+
+# Do we have a [compressors.use] in the config file?
+my %zformats;
+
+if (defined($cfg->param('compressors.use'))) {
+
+    foreach my $zformat ($cfg->param('compressors.use')) {
+        # Do we have a path defined?
+        if (!defined($cfg->param("compressors.${zformat}"))) {
+            fatal("Compressor ${zformat} requested, but path not specified.");
+        }
+        my $ext = '.' . $zformat;
+        $zformats{$ext} = $cfg->param("compressors.${zformat}");
+    }
+
+} else {
+	%zformats = (
+		'.gz'  => '/bin/gzip',
+		'.bz2' => '/usr/bin/bzip2',
+		'.xz'  => '/usr/bin/xz'
+	);
+}
+
+my $have_data = 0;
+my $have_sign = 0;
+
+# Create a temporary directory with plenty of randomness
+sub make_temp_dir() {
+	my $root;
+	my $urand;
+	my $randbytes;
+
+	# If tmp_path ends in /, we are using per-user tmp directories
+	$root = $tmp_path;
+	if ($root =~ m:/$:) {
+		$root .= $user_name;
+	}
+
+	sysopen($urand, '/dev/urandom', O_RDONLY)
+		or fatal("/dev/urandom not accessible");
+	sysread($urand, $randbytes, 16); # 16 bytes = 128 bits
+	close($urand);
+
+	if (length($randbytes) != 16) {
+		fatal("/dev/urandom returned a short read");
+	}
+
+	my $template = sprintf("%02x" x 16, unpack("C*", $randbytes));
+
+	# $template will be tainted, because it is computed from a file read;
+	# check that it looks like we expect and then untaint
+	if ($template !~ /^([0-9a-f]{32})$/) {
+		fatal("Internal error, a hex string is not a hex string");
+	}
+	$template = $1.'-XXXXXXXXXXXX';
+
+	umask(077);
+	my $dir = tempdir($template, DIR => $root, CLEANUP => 1);
+}
+
+my $tmpdir = make_temp_dir();
+if (!defined($tmpdir)) {
+	fatal("Failed to create session directory");
+}
+umask(002);
+
+my $lock_fd   = undef;
+
+sub lock_tree()
+{
+	if (!defined($lock_fd)) {
+		open($lock_fd, '<', $lock_file)
+			or fatal("Cannot open lock file");
+		flock($lock_fd, LOCK_EX)
+			or fatal("Cannot get file tree lock");
+	} else {
+		fatal("File tree is already locked");
+	}
+}
+
+sub unlock_tree()
+{
+	if (defined($lock_fd)) {
+		close($lock_fd);
+		undef $lock_fd;
+	}
+}
+
+# Encode a string; this is used by the DIR command
+# It would probably be more user-friendly if valid, printable,
+# multibyte UTF-8 was allowed in the output...
+sub url_encode($)
+{
+	my($s) = @_;
+
+	# Hack to encode an empty string
+	return '%' if ($s eq '');
+
+	my $o = '';
+
+	foreach my $c (unpack("C*", $s)) {
+		if ($c > 32 && $c < 126 && $c != 37 && $c != 43) {
+			$o .= chr($c);
+		} elsif ($c == 32) {
+			$o .= '+';
+		} else {
+			$o .= sprintf("%%%02X", $c);
+		}
+	}
+
+	return $o;
+}
+
+sub url_unescape($)
+{
+	my($s) = @_;
+	my $c;
+	my $o;
+
+	# A single isolated % sign means an empty string
+	return '' if ($s eq '%');
+
+	for (my $i = 0; $i < length($s); $i++) {
+		$c = substr($s, $i, 1);
+		if ($c eq '+') {
+			$o .= ' ';
+		} elsif ($c eq '%') {
+			$c = substr($s, $i+1, 2);
+			return undef if ($c !~ /^[0-9a-f]{2}$/i);
+			$o .= pack("C", hex $c);
+			$i += 2;
+		} else {
+			$o .= $c;
+		}
+	}
+
+	return $o;
+}
+
+# Return true if the supplied string is valid UTF-8 without special
+# characters
+sub is_clean_string($)
+{
+	no bytes;
+	# use feature 'unicode_strings';		-- is this needed here?
+
+	my($b) = @_;
+	my $f = decode('UTF-8', $b, Encode::FB_DEFAULT);
+
+	return 0 if ($f =~ m:[\x{0000}-\x{001f}\x{007f}-\x{00a0}\x{fffd}-\x{ffff}]:);
+	return 1;
+}
+
+# Decode the argument line
+sub parse_line($)
+{
+	my($line) = @_;
+	chomp $line;
+
+	if ($line !~ /^([A-Z0-9_]+)(|\s+(|\S|\S.*\S))\s*$/) {
+		return undef;				# Invalid syntax
+	}
+
+	my $cmd = $1;
+	my @args = ();
+
+	if ($2 ne '') {
+		my @rawargs = split(/\s+/, $3);
+
+		foreach my $ra (@rawargs) {
+			my $a = url_unescape($ra);
+			return undef if (!defined($a) || !is_clean_string($a));
+			push(@args, $a);
+		}
+	}
+
+	return ($cmd, @args);
+}
+
+# This returns true if the given argument is a valid filename in its
+# canonical form.  Double slashes, relative paths, dot files, control
+# characters, and malformed UTF-8 is not permitted.  We cap the length
+# of each pathname component to 100 bytes to we can add an extension
+# without worrying about it, and the entire pathname to 1024 bytes.
+sub is_valid_filename($)
+{
+	use bytes;
+
+	my($f) = @_;
+
+	return 0 if (length($f) > 1024); # Reject ridiculously long paths
+	return 0 if (!is_clean_string($f)); # Reject bad UTF-8 and control characters
+	return 0 if ($f !~ m:^/:);		# Reject relative paths
+	return 0 if ($f =~ m:/$:);		# Reject paths ending in /
+	return 0 if ($f =~ m://:);		# Reject double slashes
+
+	# Reject filename components starting with dot or dash, covers . and ..
+	return 0 if ($f =~ m:/[\.\-]:);
+
+	# Reject undesirable filename characters anywhere in the name.
+	# This isn't inherently security-critical, and could be tuned if
+	# users need it...
+	return 0 if ($f =~ m:[\!\"\$\&\'\*\;\<\>\?\\\`\|]:);
+
+	# Make sure we can create a filename after adding .bz2 or similar.
+	# We can't use the obvious regexp here, because regexps operate on
+	# characters, not bytes.  The limit of 100 is semi-arbitrary, but
+	# we shouldn't need filenames that long.
+	my $n = 0;
+	my $nmax = 0;
+	for (my $i = 0; $i < length($f); $i++) {
+		my $c = substr($f, $i, 1);
+		$n = ($c eq '/') ? 0 : $n+1;
+		$nmax = ($n > $nmax) ? $n : $nmax;
+	}
+	return 0 if ($nmax > 100);
+
+	return 1;
+}
+
+# Return a percentage, valid even if the denominator is zero
+sub percentage($$)
+{
+	my($num, $den) = @_;
+
+	return 100 if $num eq $den || $den eq 0;
+	return sprintf('%.1f', 100*$num/$den);
+}
+
+sub get_blob($$@)
+{
+	my($cmd, $name, @args) = @_;
+	my($len, $format) = @args;
+
+	if (!defined($format) || $len !~ /^[0-9]+$/) {
+		fatal("Bad $cmd command");
+	}
+
+	my $zcmd;
+
+	if ($format eq '') {
+		undef $zcmd;
+	} elsif (!defined($zcmd = $zformats{'.'.$format})) {
+		fatal("Unsupported compression format");
+	}
+
+	my $output = $tmpdir.'/'.$name;
+
+	my $outfd;
+	my $writefd;
+	my $oldstdout;
+
+	local $SIG{'ALRM'} = sub { fatal("Timeout waiting for data"); };
+
+	open($outfd, '>', $output)
+		or fatal("Failed to open $cmd file");
+	binmode($outfd);
+
+	if (defined($zcmd)) {
+		open($oldstdout, '>&', \*STDOUT) or die;
+		open(STDOUT, '>&', $outfd) or die;
+		close($outfd);
+		undef $outfd;
+
+		open($outfd, '|-', $zcmd, '-cd') or die;
+		binmode($outfd);
+
+		open(STDOUT, '>&', $oldstdout) or die;
+		close($oldstdout);
+	}
+
+	# We don't show a progress bar if the transfer is very short or
+	# quick, like with typical signatures.
+	my $prog_time = time() + 2;
+	my $prog_perc = -1;
+
+	my $left = $len;
+	while ($left) {
+		my $blk = $left < $bufsiz ? $left : $bufsiz;
+		my $data;
+		my $rl;
+
+		alarm($timeout_data);
+		$blk = read(STDIN, $data, $blk);
+		alarm(0);
+
+		if ($blk < 1) {
+			fatal("End of stream before end of $cmd");
+		}
+
+		if (!print $outfd $data) {
+			fatal("Write error during $cmd");
+		}
+
+		$left -= $blk;
+
+		# STDERR needs to be flushed
+		STDERR->autoflush(1);
+
+		my $now  = time();
+		my $perc = percentage($len-$left, $len);
+		if ($left == 0 ?
+			($prog_perc >= 0) :				# Show 100% iff we already showed a progress bar
+			($now > $prog_time && $perc != $prog_perc)) {
+			printf STDERR "%10u [%-50s] %4s%%\r", $len, '=' x ($perc >> 1), $perc;
+			$prog_perc = $perc;
+			$prog_time = $now;
+		}
+	}
+
+	close($outfd)
+		or fatal("Write error during $cmd");
+
+	print STDERR "\n" if ($prog_perc >= 0);
+
+	syslog(LOG_DEBUG, "%u bytes read, %u bytes written", $len, -s $output);
+	return $len;
+}
+
+sub get_raw_data(@) {
+	my @args = @_;
+
+	if (get_blob('DATA', 'data', @args) > $max_data) {
+		# This should never happen, as we should have died already
+		fatal("DATA output impossibly large");
+	}
+
+	$have_data = 1;
+}
+
+# Get the canonical name for a git ref and its type
+sub check_ref($$)
+{
+	my($repo, $ref) = @_;
+
+	my $out = undef;
+
+	if (!is_clean_string($ref) || $ref =~ /^-/) {
+		return undef;
+	}
+
+	# It turns out Git::command_bidi_pipe() is broken under -T
+	$ENV{'GIT_DIR'} = $repo->repo_path();
+
+	my $pipe_in;
+	my $pipe_out;
+	my $pid = open2($pipe_in, $pipe_out, 'git', 'cat-file', '--batch-check');
+	print $pipe_out $ref, "\n";
+	close($pipe_out);
+	$out = <$pipe_in>;
+	chomp $out;
+	waitpid($pid, 0);
+
+	if ($? == 0 && $out =~ /^([0-9a-f]{40}) (\S+) ([0-9]+)$/) {
+		return ($1, $2, $3+0);
+	} else {
+		return undef;
+	}
+}
+
+sub get_tar_data(@)
+{
+	my @args = @_;
+
+	if (scalar(@args) != 3) {
+		fatal("Bad TAR command");
+	}
+
+	my($tree, $ref, $prefix) = @args;
+
+	if (!is_valid_filename($tree)) {
+		fatal("Invalid pathname in TAR command");
+	}
+
+	if (!is_clean_string($prefix)) {
+		fatal("Invalid prefix string");
+	}
+
+	if ($tree !~ /\.git$/ || ! -d $git_path.$tree ||
+		! -d $git_path.$tree.'/objects') {
+		fatal("No such git tree");
+	}
+
+	my $repo;
+	git_cmd_try {
+		$repo = Git->repository(Repository => $git_path.$tree);
+	} "Invalid git repository\n";
+
+	my ($sha, $type, $len) = check_ref($repo, $ref);
+	if (!defined($type) || $type !~ /^(tree|commit|tag)$/) {
+		fatal("Invalid tree reference");
+	}
+
+	syslog(LOG_INFO, "tar ref ${sha}");
+
+	git_cmd_try {
+		$repo->command_noisy('archive', '--format=tar', '--prefix='.$prefix,
+							 '-o', $tmpdir.'/data', $ref);
+	} "Failed to acquire tarball\n";
+
+	$have_data = 1;
+}
+
+sub get_diff_data(@)
+{
+	my @args = @_;
+
+	if (scalar(@args) != 3) {
+		fatal("Bad DIFF command");
+	}
+
+	my($tree, $ref1, $ref2) = @args;
+
+	if (!is_valid_filename($tree)) {
+		fatal("Invalid pathname in DIFF command");
+	}
+
+	if ($tree !~ /\.git$/ || ! -d $git_path.$tree ||
+		! -d $git_path.$tree.'/objects') {
+		fatal("No such git tree");
+	}
+
+	my $repo;
+	git_cmd_try {
+		$repo = Git->repository(Repository => $git_path.$tree);
+	} "Invalid git repository\n";
+
+	my ($sha1, $type1, $len1) = check_ref($repo, $ref1);
+	if (!defined($type1) || $type1 !~ /^(tree|commit|tag)$/) {
+		fatal("Invalid tree reference");
+	}
+
+	my ($sha2, $type2, $len2) = check_ref($repo, $ref2);
+	if (!defined($type2) || $type2 !~ /^(tree|commit|tag)$/) {
+		fatal("Invalid tree reference");
+	}
+
+	syslog(LOG_INFO, "diff refs ${sha1}..${sha2}");
+
+	git_cmd_try {
+		my $oldstdout;
+		my $out;
+
+		open($oldstdout, '>&', \*STDOUT) or die;
+		sysopen($out, $tmpdir.'/data', O_WRONLY|O_CREAT|O_TRUNC) or die;
+		open(STDOUT, '>&', $out) or die;
+		close($out);
+
+		$repo->command_noisy('diff-tree', '-p', $sha1, $sha2);
+
+		open(STDOUT, '>&', $oldstdout);
+		close($oldstdout);
+	} "Failed to acquire patch file\n";
+
+	$have_data = 1;
+}
+
+sub get_sign_data(@)
+{
+	my @args = @_;
+
+	if (get_blob('SIGN', 'data.sign', @args) >= 65536) {
+		fatal("SIGN output impossibly large");
+	}
+
+	$have_sign = 1;
+}
+
+sub term_children(@)
+{
+	my(%workers) = @_;
+	foreach my $c (keys %workers) {
+		kill('TERM', $c);
+	}
+}
+
+sub make_compressed_data()
+{
+	die if (!$have_data);
+
+	my %workers;
+	my %infds;
+	my $nworkers = 0;
+
+	my $tarsize = -s $tmpdir.'/data';
+
+	foreach my $e (keys(%zformats)) {
+		my @c = ($zformats{$e}, '-9');
+		if ($zformats{$e} =~ /\s+/) {
+			@c = split(/\s+/, $zformats{$e});
+			push (@c, '-9');
+		}
+
+		sysopen($infds{$e}, $tmpdir.'/data', O_RDONLY) or
+		    fatal("Failed to open uncompressed data file");
+
+		my $w = fork();
+
+		if (!defined($w)) {
+			fatal("Fork failed");
+		}
+
+		if ($w == 0) {
+			open(STDIN, '<&', $infds{$e}) or exit 127;
+			close($infds{$e});
+			open(STDOUT, '>', $tmpdir.'/data'.$e) or exit 127;
+
+			# This is necessary to work around a bug in Perl 5.10.1;
+			# if we don't do this then Perl 5.10.1 seeks to the point
+			# in STDIN which matches the number of bytes that has been
+			# read from STDIN since the beginning of the script, ignoring
+			# the fact that STDIN was just redirected above.
+			seek(STDIN, 0, 0);
+
+			setrlimit(RLIMIT_CPU, $timeout_compress_cpu, $timeout_compress_cpu);
+
+			exec {$c[0]} @c;
+			exit 127;
+		}
+
+		$workers{$w} = $e;
+		$nworkers++;
+	}
+
+	my $start_time = time();
+
+	# STDERR needs to be flushed
+	STDERR->autoflush(1);
+
+	# A pipe to notify SIGCHLD
+	pipe(my $sigchldrd, my $sigchldwr)
+	    or fatal("Failed to create notification pipe");
+
+	local $SIG{'CHLD'} = sub {
+		syswrite($sigchldwr, "\0", 1)
+		    or fatal("Notification pipe write error");
+	};
+
+	my $waitvec = '';
+	vec($waitvec, fileno($sigchldrd),1) = 1;
+
+	my $status_wait = 2; # Frequency of status updates
+
+	while ($nworkers) {
+		my $w = waitpid(-1, WNOHANG);
+		my $status = $?;
+
+		if ($w == 0) {
+			my $now = time();
+			if ($now - $start_time >= $timeout_compress) {
+				print STDERR "\n";
+				term_children(%workers);
+				fatal("Timeout compressing output data");
+			}
+
+			if (select(my $wvout = $waitvec, undef, undef, $status_wait) == 1) {
+				# Drain the notification pipe
+				sysread($sigchldrd, my $junk, 1);
+			}
+		}
+
+		my @ostr = ();
+		foreach my $e (sort(keys %infds)) {
+			my $fpos = sysseek($infds{$e}, 0, SEEK_CUR);
+			push(@ostr,
+				sprintf("%s:%4s%%", $e,
+					percentage($fpos, $tarsize)));
+		}
+		print STDERR "Compressing: ", join(' ', @ostr), "\r";
+
+		if (defined($workers{$w})) {
+			my $e = $workers{$w};
+			undef $workers{$w};
+			if ($status) {
+				print STDERR "\n";
+				term_children(%workers);
+				fatal("Failed to compress output data");
+			}
+
+			my $zsize = -s $tmpdir.'/data'.$e;
+
+			my $zpc = percentage($zsize, $tarsize);
+
+			syslog(LOG_DEBUG, "%s compression: %u -> %u bytes (%s%%)",
+				   $e, $tarsize, $zsize, $zpc);
+
+			$nworkers--;
+		}
+	}
+
+	close($sigchldrd);
+	close($sigchldwr);
+
+	foreach my $fd (values %infds) {
+		close($fd);
+	}
+
+	print STDERR "\n";
+}
+
+sub make_timestamps_match()
+{
+	die if (!$have_data || !$have_sign);
+
+	my $now = time();
+
+	foreach my $e ('', keys(%zformats), '.sign') {
+		utime($now, $now, $tmpdir.'/data'.$e);
+	}
+}
+
+sub cleanup()
+{
+	foreach my $e ('', keys(%zformats), '.sign') {
+		unlink($tmpdir.'/data'.$e);
+	}
+
+	$have_data = 0;
+	$have_sign = 0;
+}
+
+sub signature_valid()
+{
+	my $oldstdout;
+	my $oldstderr;
+	my $devnull;
+
+	# gpg(v) likes to chat on the console no matter what...
+	open($devnull, '>', '/dev/null')
+		or fatal("Cannot open /dev/null");
+	open($oldstdout, '>&', \*STDOUT)
+		or fatal("dup error");
+	open($oldstderr, '>&', \*STDERR)
+		or fatal("dup error");
+	open(STDOUT, '>&', $devnull)
+		or fatal("dup error");
+	open(STDERR, '>&', $devnull)
+		or fatal("dup error");
+	close($devnull);
+
+	my $status =
+		system('/usr/bin/gpgv',
+			   '--quiet',
+			   '--homedir', $tmpdir,
+			   '--keyring', $pgp_path."/${user_name}.gpg",
+			   $tmpdir.'/data.sign', $tmpdir.'/data');
+
+	open(STDOUT, '>&', $oldstdout);
+	close($oldstdout);
+	open(STDERR, '>&', $oldstderr);
+	close($oldstderr);
+
+	return $status == 0;
+}
+
+# Return true if the filename has one of the extensions in the list
+sub has_extension($@) {
+	my($file, @exts) = @_;
+
+	foreach my $e (@exts) {
+		return 1 if (substr($file, -length($e)) eq $e);
+	}
+
+	return 0;
+}
+
+sub put_file(@)
+{
+	my @args = @_;
+
+	if (scalar(@args) != 1) {
+		fatal("Bad PUT command");
+	}
+
+	my($file) = @args;
+
+	if (!$have_data) {
+		fatal("PUT without DATA");
+	}
+	if (!$have_sign) {
+		fatal("PUT without SIGN");
+	}
+
+	if (!signature_valid()) {
+		fatal("Signature invalid");
+	}
+
+	if (!is_valid_filename($file)) {
+		fatal("Invalid filename in PUT command");
+	}
+
+	my @install_ext;
+	my @conflic_ext;
+	my $stem;
+
+	if ($file =~ /^(.*)\.gz$/) {
+		$stem = $1;
+
+		make_compressed_data();
+
+		@conflic_ext = ('');
+		@install_ext = ('.sign', keys(%zformats));
+	} elsif (has_extension($file, '.sign', keys(%zformats))) {
+		fatal("$file: Cannot install auxiliary files directly");
+	} else {
+		$stem = $file;
+
+		@conflic_ext = keys(%zformats);
+		@install_ext = ('.sign', '');
+	}
+
+	make_timestamps_match();
+
+	foreach my $e (@install_ext) {
+		if ($e ne '.sign') {
+			# Should we make the digest algo configurable?
+			my $sha = Digest::SHA->new('sha256');
+			print STDERR "\rCalculating sha256 for ".$stem.$e." ";
+			$sha->addfile($tmpdir.'/data'.$e);
+			syslog(LOG_NOTICE, "sha256: %s: %s", $stem.$e, $sha->hexdigest);
+		}
+	}
+	print STDERR "... logged.\n";
+
+	lock_tree();
+
+	foreach my $e (@conflic_ext) {
+		if (-e $data_path.$stem.$e) {
+			fatal("$file: Filename conflict (compressed and uncompressed)");
+		}
+	}
+
+	my $ok = 1;
+	foreach my $e (@install_ext) {
+		if (-e $data_path.$stem.$e && ! -f _) {
+			fatal("$file: Trying to overwrite a non-file");
+		}
+	}
+
+	my @undoes = ();
+	foreach my $e (@install_ext) {
+		my $target = $data_path.$stem.$e;
+		if (!rename($tmpdir.'/data'.$e, $target)) {
+			my $err = $!;
+			unlink(@undoes);
+			$! = $err;
+			fatal("$file: Failed to install files: $!");
+		}
+		push(@undoes, $target);
+	}
+
+	unlock_tree();
+	cleanup();
+}
+
+sub do_mkdir(@)
+{
+	my @args = @_;
+
+	if (scalar(@args) != 1) {
+		fatal("Bad MKDIR command");
+	}
+
+	my($file) = @args;
+
+	if (!is_valid_filename($file)) {
+		fatal("Invalid filename in MKDIR command");
+	}
+
+	my @badext = ('.sign', keys(%zformats));
+
+	foreach my $e (@badext) {
+		if (substr($file, -length($e)) eq $e) {
+			fatal("Protected filename space");
+		}
+	}
+
+	lock_tree();
+
+	foreach my $e (@badext) {
+		if (-e $data_path.$file.$e) {
+			fatal("Filename conflict (file and directory)");
+		}
+	}
+
+	make_path($data_path.$file, {
+				mode  => 0777,
+				error => \my $err,
+	});
+
+	if (@$err) {
+		for my $diag (@$err) {
+			my ($file, $message) = %$diag;
+			if ($file eq '') {
+				fatal("General error: $message");
+			} else {
+				fatal("Problem creating $file: $message");
+			}
+		}
+	}
+
+	unlock_tree();
+}
+
+sub do_rename($$) {
+	my($f,$t) = @_;
+
+	return rename($f, $t);
+}
+sub undo_rename($$) {
+	my($f, $t) = @_;
+
+	rename($t, $f);
+}
+
+sub do_link($$) {
+	my($f,$t) = @_;
+
+	return link($f, $t);
+}
+sub undo_link($$) {
+	my($f,$t) = @_;
+
+	unlink($t);
+}
+
+sub move_or_link_file($@)
+{
+	my($cmd, @args) = @_;
+
+	if (scalar(@args) != 2) {
+		fatal("Bad $cmd command");
+	}
+
+	my $op   = ($cmd eq 'MOVE') ? \&do_rename   : \&do_link;
+	my $unop = ($cmd eq 'MOVE') ? \&undo_rename : \&undo_link;
+
+	my($from, $to) = @args;
+
+	if (!is_valid_filename($from) || !is_valid_filename($to)) {
+		fatal("Invalid filename in $cmd command");
+	}
+
+	if ($from =~ /\.gz$/) {
+		if ($to !~ /\.gz$/) {
+			fatal("$cmd of .gz file must itself end in .gz");
+		}
+	} elsif (has_extension($from, '.sign', keys(%zformats))) {
+		fatal("$cmd to auxiliary files not supported");
+	} elsif (has_extension($to, '.sign', keys(%zformats))) {
+		fatal("$cmd to auxiliary filename space");
+	}
+
+	lock_tree();
+
+	my $from_stem;
+	my $to_stem;
+	my @conflic_ext = ();
+	my @install_ext = ();
+	my $type;
+
+	if (!-e $data_path.$from) {
+		fatal("$cmd of nonexistent object");
+	} elsif (-d $data_path.$from) {
+		if ($cmd ne 'MOVE') {
+			fatal("Cannot $cmd a directory");
+		}
+
+		if (-e $data_path.$to) {
+			fatal("Directory MOVE destination busy");
+		}
+
+		if (!rename($data_path.$from, $data_path.$to)) {
+			fatal("$cmd of directory failed");
+		}
+
+		unlock_tree();
+		return;
+	} elsif (-f $data_path.$from) {
+		if ($from =~ /^(.*)\.gz$/) {
+			$from_stem = $1;
+
+			die if ($to !~ /^(.*)\.gz$/); # Should already be checked
+			$to_stem = $1;
+
+			@conflic_ext = ('');
+			@install_ext = ('.sign', keys(%zformats));
+
+			$type = 'compressed';
+		} else {
+			$from_stem = $from;
+			$to_stem   = $to;
+
+			@conflic_ext = keys(%zformats);
+			@install_ext = ('.sign', '');
+
+			$type = 'plain';
+		}
+	} else {
+		fatal("$cmd of non-directory/non-file not currently supported");
+	}
+
+	# If we continue here we're processing a file...
+
+	foreach my $e (@conflic_ext) {
+		if (-e $data_path.$to_stem.$e) {
+			fatal("Filename conflict (compressed and uncompressed)");
+		}
+	}
+
+	foreach my $e (@install_ext) {
+		if (-e $data_path.$to_stem.$e && ! -f _) {
+			fatal("Trying to overwrite a non-file");
+		}
+	}
+
+	my @undoes = ();
+	foreach my $e (@install_ext) {
+		my $a = [$data_path.$from_stem.$e, $data_path.$to_stem.$e];
+		if (!$op->(@$a)) {
+			foreach my $u (@undoes) {
+				$unop->(@$u);
+			}
+			fatal("$cmd of $type file failed");
+		}
+		push(@undoes, $a);
+	}
+
+	unlock_tree();
+}
+
+sub delete_path(@)
+{
+	my(@args) = @_;
+
+	if (scalar(@args) != 1) {
+		fatal("Bad DELETE command");
+	}
+
+	my($file) = @args;
+
+	if (!is_valid_filename($file)) {
+		fatal("Invalid pathname in DELETE command");
+	}
+
+	if ($file !~ /\.gz$/ &&
+		has_extension($file, '.sign', keys(%zformats))) {
+		fatal("DELETE of auxiliary files not supported");
+	}
+
+	lock_tree();
+
+	my $stem;
+	my @exts;
+	my $type;
+
+	if (!-e $data_path.$file) {
+		fatal("DELETE of nonexistent object");
+	} elsif (-d $data_path.$file) {
+		if (!rmdir($data_path.$file)) {
+			fatal("DELETE of directory failed");
+		}
+		unlock_tree();
+		return;
+	} elsif (-f $data_path.$file) {
+		if ($file =~ /^(.*)\.gz$/) {
+			$stem = $1;
+			@exts = ('.sign', keys(%zformats));
+			$type = 'compressed';
+		} else {
+			$stem = $file;
+			@exts = ('.sign', '');
+			$type = 'plain';
+		}
+	} else {
+		fatal("DELETE of non-directory/non-file not currently supported");
+	}
+
+	# If we continue here we're processing a file...
+
+	foreach my $e (@exts) {
+		if (-e $data_path.$stem.$e && ! -f _) {
+			fatal("DELETE encountered files and non-files");
+		}
+	}
+
+	foreach my $e (@exts) {
+		if (!unlink($data_path.$stem.$e)) {
+			fatal("DELETE of $type file failed");
+		}
+	}
+
+	unlock_tree();
+}
+
+sub mode_string($)
+{
+	my($mode) = @_;
+	my $s;
+
+	if (S_ISREG($mode)) {
+		$s = '-';
+	} elsif (S_ISDIR($mode)) {
+		$s = 'd';
+	} elsif (S_ISLNK($mode)) {
+		$s = 'l';
+	} else {
+		# We should not have BLK, CHR, FIFO or SOCK in this hierarchy
+		return '??????????';
+	}
+
+	$s .= ($mode & S_IRUSR) ? 'r' : '-';
+	$s .= ($mode & S_IWUSR) ? 'w' : '-';
+	$s .= ($mode & S_ISUID) ?
+		(($mode & S_IXUSR) ? 's' : 'S') :
+		(($mode & S_IXUSR) ? 'x' : '-');
+
+	$s .= ($mode & S_IRGRP) ? 'r' : '-';
+	$s .= ($mode & S_IWGRP) ? 'w' : '-';
+	$s .= ($mode & S_ISGID) ?
+		(($mode & S_IXGRP) ? 's' : 'S') :
+		(($mode & S_IXGRP) ? 'x' : '-');
+
+	$s .= ($mode & S_IROTH) ? 'r' : '-';
+	$s .= ($mode & S_IWOTH) ? 'w' : '-';
+	$s .= ($mode & S_ISVTX) ?
+		(($mode & S_IXOTH) ? 's' : 'S') :
+		(($mode & S_IXOTH) ? 'x' : '-');
+
+	return $s;
+}
+
+my %uid_hash = ();
+sub get_usr($)
+{
+	my($uid) = @_;
+
+	if (defined($uid_hash{$uid})) {
+		return $uid_hash{$uid};
+	}
+
+	my $usr = getpwuid($uid) || sprintf("%u", $uid);
+	$usr = url_encode($usr);		# If we have really strange names...
+
+	$uid_hash{$uid} = $usr;
+	return $usr;
+}
+
+my %gid_hash = ();
+sub get_grp($)
+{
+	my($gid) = @_;
+
+	if (defined($gid_hash{$gid})) {
+		return $gid_hash{$gid};
+	}
+
+	my $grp = getgrgid($gid) || sprintf("%u", $gid);
+	$grp = url_encode($grp);		# If we have really strange names...
+
+	$gid_hash{$gid} = $grp;
+	return $grp;
+}
+
+sub do_dir(@)
+{
+	my(@args) = @_;
+
+	if (scalar(@args) != 1) {
+		fatal("Bad DELETE command");
+	}
+
+	my($dir) = @args;
+
+	# DIR / is permitted unlike any other command
+	$dir =~ s:/$::g;
+	if ($dir ne '' && !is_valid_filename($dir)) {
+		fatal("Invalid pathname in DIR command");
+	}
+	$dir .= '/';
+
+	my $dh;
+	if (!opendir($dh, $data_path.$dir)) {
+		fatal("Invalid directory in DIR command");
+	}
+
+	# Synchronization marker to make output machine-readable
+	print '+++ ', url_encode($dir), "\n";
+
+	foreach my $de (sort readdir($dh)) {
+		next if ($de =~ /^\./);		# Hidden files include . and ..
+
+		my @st = lstat($data_path.$dir.'/'.$de);
+
+		next unless(scalar(@st) == 13);
+
+		printf "%-10s %3u %-8s %-8s %10u %s %s\n",
+				mode_string($st[2]), $st[3],
+				get_usr($st[4]), get_grp($st[5]), $st[7],
+				POSIX::strftime("%Y-%m-%d %H:%M:%S", gmtime($st[9])),
+				url_encode($de);
+	}
+
+	closedir($dh);
+
+	# Termination marker to make output machine-readable
+	STDOUT->autoflush(1);		# At least try to flush stdout after this line
+	print "\n";
+	STDOUT->autoflush(0);
+}
+
+sub get_command()
+{
+	local $SIG{'ALRM'} = sub { fatal("Timeout waiting for command"); };
+
+	alarm($timeout_command);
+	my $line = <STDIN>;
+	alarm(0);
+
+	return $line;
+}
+
+my $line;
+while (defined($line = get_command())) {
+	# Ignore lines with only whitespace or starting with #
+	next if ($line =~ /^\s*(|\#.*)$/);
+
+	chomp $line;
+
+	if (!is_clean_string($line) || length($line) > 4096) {
+		syslog(LOG_ERR, "Received garbage input");
+		fatal("Invalid command");
+	}
+
+	syslog(LOG_NOTICE, "Cmd: $line");
+
+	my($cmd, @args) = parse_line($line);
+
+	if (!defined($cmd)) {
+		fatal("Syntax error");
+	}
+
+	if ($cmd eq 'DATA') {
+		get_raw_data(@args);
+	} elsif ($cmd eq 'TAR') {
+		get_tar_data(@args);
+	} elsif ($cmd eq 'DIFF') {
+		get_diff_data(@args);
+	} elsif ($cmd eq 'SIGN') {
+		get_sign_data(@args);
+	} elsif ($cmd eq 'PUT') {
+		put_file(@args);
+	} elsif ($cmd eq 'MKDIR') {
+		do_mkdir(@args);
+	} elsif ($cmd eq 'MOVE' || $cmd eq 'LINK') {
+		move_or_link_file($cmd, @args);
+	} elsif ($cmd eq 'DELETE') {
+		delete_path(@args);
+	} elsif ($cmd eq 'DIR') {
+		do_dir(@args);
+	} elsif ($cmd eq 'DONE') {
+		last;
+	} else {
+		fatal("Invalid command");
+	}
+}
+
+syslog(LOG_NOTICE, "Session completed successfully");
+exit 0;
+
+# vim: noet:

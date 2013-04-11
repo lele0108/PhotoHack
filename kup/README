@@ -1,0 +1,15 @@
+ABOUT
+-----
+Kup is a file upload utility for kernel.org. It is designed to only accept
+cryptographically verified uploads from pre-authorized, trusted members.
+
+See man kup and man kup-server for more information.
+
+AUTHORS
+-------
+Kup was written by H. Peter Anvin <hpa@zytor.com>
+Kup is currently maintained by Konstantin Ryabitsev <mricon@kernel.org>
+
+SUPPORT
+-------
+Please send questions and patches to kup@lists.kernel.org.
