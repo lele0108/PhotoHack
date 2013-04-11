@@ -49,6 +49,11 @@ iframe {
 	height:400px;
 }
 
+.slider .row-fluid,
+.slider .span12 {
+    height: 100%
+}
+
 .upload {
 	background-color:gray;
 	position:relative;
