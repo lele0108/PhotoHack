@@ -181,16 +181,6 @@
   </div>
   <div class="maze">
   <div class="row">
-<<<<<<< HEAD
-  <div class="span10 offset1">
-  <div id="mazehere">
-    <canvas id="maze" width="100" height="100"></canvas>
-  </div>
-  </div>
-  </div>
-  </div>
-
-=======
     <div class="maze-wrap">
       <div class="buttons">
         <div id="difficulty-easy" class="awesome-button"><p class="playbutton">Easy</p></div>
@@ -207,7 +197,6 @@
     </div>
   </div>
   </div>  
->>>>>>> 96ce242d758ff4dac1cd3b6f376119a6a28b7fc7
 <?php
   include_once "footer.php";
 ?>
