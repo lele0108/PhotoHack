@@ -13,6 +13,7 @@
     var ctx = canvas.getContext("2d");
 
     var token = window.location.href.match(/token=([^\.#$\[\]]+)/);
+    //$('.win-lose').hide();
     if (token) {
         token = token[1];
         loadMaze(token, function (snapshot) {
@@ -116,6 +117,7 @@
               // end of game animation
               // $('.buttons').html('<p>'+score.me+':'+score.opponent+'</p>').show();
               $('#maze').animate({opacity: 0});
+              //$('.win-lose').show();
             });
             $('.buttons').hide();
             // show maze immediately
@@ -187,6 +189,9 @@
         <div id="difficulty-medium" class="awesome-button"><p class="playbutton">Medium</p></div>
         <div id="difficulty-hard" class="awesome-button"><p class="playbutton">Hard</p></div>
       </div>
+      <!--<div class="win-lose">
+        <div class="awesome-button"><p width="400"><b>Congrats!</b></p></div>
+      </div>-->
       <canvas id="maze" width="600" height="400"></canvas>
       <?php if (isset($_GET['mazeImage'])): ?>
         <img id="user-image" src="<?php echo $_GET['mazeImage']; ?>" />

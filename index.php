@@ -49,13 +49,27 @@ $(document).ready( function(){
         </div><!--end span10 offset1!-->
       </div><!--end row fluid!-->
       </div><!--end menu!-->
-      <div class="hidden-phone">
+      <!--<div class="hidden-phone">
       <div class="slider">
         <div class="row-fluid">
           <div class="span12">
             <div class="row-fluid">
               <div class="span12">
                 <iframe src="image.php?mazeImage=http://farm9.staticflickr.com/8319/7988784175_f662ddb020.jpg" border="none" scrolling="no" width="100%" height="100%" align="center" ></iframe>
+              </div>
+            </div>
+          </div>
+        </div><!--end row fluid!-->
+      <!--</div><!--end class slider!-->
+      <!--</div><!--end hidden phone!-->
+      <div class="hidden-phone">
+      <div class="slider">
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="row-fluid">
+              <div class="span12">
+                <h1 class="text-center">Create Mazes from Images</h1><br><br><br>
+                <center><img src="img/custom.gif"></center>
               </div>
             </div>
           </div>

@@ -28,6 +28,7 @@
               });
           });
           $("#page").val(parseInt($("#page").val())+1); 
+          $('#next-btn').css('display', 'block');
       }
 
 /*      $(document).ready(function() {
@@ -97,16 +98,18 @@
                   </center>
                    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                       <h3 id="myModalLabel">Public Gallery</h3>
                     </div>
                     <div class="modal-body">
-                    <input id="searchInput" type="text" name="term" class="awesomeinput">
+                      <form action="Javascript:searchNew();">
+                        <input id="searchInput" type="text" name="term" class="awesomeinput">
                         <button class="awesome-button3" onclick="searchNew()">Search</button>
+                      <form>
                       <div class="fivepx">
                       <div id="logged_in"></div>
                       <br>
-                      <button id="" class="awesome-button3" onclick="searchNext()">Next</button>
+                      <button style="display:none;" id="next-btn" class="awesome-button3" onclick="searchNext()">Next</button>
                     </div>
                     <input id="page" type="hidden" name="page" value="1">
                     </div>
