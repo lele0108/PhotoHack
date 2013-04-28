@@ -40,7 +40,7 @@
           else if (snapshot.name() == 'ready') {
             var ready = snapshot.val();
             if (ready.player2) {
-              $('.buttons').html('<span class="awesome-button">Waiting for player 1...</span>');
+              $('.buttons').html('<span class="awesome-button">Waiting for player 1...<br /><br /><img width="100" height="100" src="img/load.gif"/></span>');
               if (ready.player1) {
                 $('.buttons').hide();
                 // starting count down shuld goes here
@@ -85,7 +85,7 @@
               if (snapshot.name() == 'ready') {  
                 var ready = snapshot.val();
                 if (ready.player1) {
-                  $('.buttons').html('<span class="awesome-button">Waiting for player 2...</span>');
+                  $('.buttons').html('<span class="awesome-button">Waiting for player 2...<br /><br /><img width="100" height="100" src="img/load.gif"/></span>');
                   if (ready.player2) {
                     $('.buttons').hide();
                     // starting count down shuld goes here
