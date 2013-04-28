@@ -104,8 +104,8 @@
                     <div class="modal-body">
                       <form action="Javascript:searchNew();">
                         <input id="searchInput" type="text" name="term" class="awesomeinput">
-                        <button class="awesome-button3" onclick="searchNew()">Search</button>
-                      <form>
+                        <button type="submit" class="awesome-button3" onClick="">Search</button>
+                      </form>
                       <div class="fivepx">
                       <div id="logged_in"></div>
                       <br>
