@@ -55,7 +55,8 @@ $(document).ready( function(){
           <div class="span12">
             <div class="row-fluid">
               <div class="span12">
-                <iframe src="image.php?mazeImage=http://farm9.staticflickr.com/8319/7988784175_f662ddb020.jpg" border="none" scrolling="no" width="100%" height="100%" align="center" ></iframe>
+                <h1 class="text-center">Create Mazes from Images</h1><br><br><br>
+                <center><img src="img/custom.gif"></center>
               </div>
             </div>
           </div>
