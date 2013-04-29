@@ -47,10 +47,7 @@ iframe {
 .slider {
 	position:relative;
 	height:400px;
-<<<<<<< HEAD
 	/* Newly added for slider*/
-=======
->>>>>>> commit
 	background: url('../img/background.png') no-repeat center center fixed;
 	-webkit-background-size: cover;
   	-moz-background-size: cover;
