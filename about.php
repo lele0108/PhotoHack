@@ -45,7 +45,7 @@
 
             <div class="row-fluid">
               <div class="span3 "><img src="img/danish.jpg"><p>Danish Shaik: Front end designer</p></div>
-              <div class="span3"><img src="img/zuhayeer.jpg"><p>Zuhayeer: Back End PHP Developer</p></div>
+              <div class="span3"><img src="img/zuhayeer.jpg"><p>Zuhayeer Musa: Back End PHP Developer</p></div>
               <div class="span3"><img src="img/jimmy.jpg"><p>Jimmy Liu: Front End Designer</p></div>
               <div class="span3">
                 <h2 class="text-right">12,920 <span>Calories</span></h2>

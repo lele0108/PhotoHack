@@ -90,6 +90,10 @@
 
                 </div>
                   <br><br>
+                  <div class="alert alert-error visible-phone visible-tablet">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    Mobile and tablet support is very limited as of <strong>now</strong>. We are working on it.
+                  </div>
                   <!-- Button to trigger modal -->
                   <center>                   
                   	<input type="filepicker" class="awesome-button2" data-fp-apikey="AK8NQWurTGqXdwjpiHQ3Qz" data-fp-mimetypes="image/*" data-fp-container="modal" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA" onchange="linkToMaze(event.fpfile.url)">
@@ -98,7 +102,7 @@
                   </center>
                    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                       <h3 id="myModalLabel">Public Gallery</h3>
                     </div>
                     <div class="modal-body">

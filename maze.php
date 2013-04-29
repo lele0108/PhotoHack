@@ -32,7 +32,7 @@
               // $('.buttons').html('<p>'+score.me+':'+score.opponent+'</p>').show();
               $('#maze').animate({opacity: 0});
             }, [255,0,0,255], token);
-            var $readyBtn = $('<a href="#" class="button awesome-button">I\'m ready!</a>').click(function() {
+            var $readyBtn = $('<a href="#" class="button awesome-button" style="color: #000; font-size: 200%;">I\'m ready!</a>').click(function() {
               setReady(token, "player2", true);
             });
             $('.buttons').html($readyBtn);
@@ -104,8 +104,8 @@
               // $('.buttons').html('<p>'+score.me+':'+score.opponent+'</p>').show();
               $('#maze').animate({opacity: 0});
             }, [0,255,0,255], token);
-            $('.buttons').html('<div class="awesome-button" style="display: inline-block;"><label for="url">Send the following URL to your opponent<br></label><input id="url" type="text" value="' + URI(window.location.href).search('token='+token) + '"</span><br><br></div>');
-            var $readyBtn = $('<a href="#" class="button" style="color: #000; font-size: 120%;">I\'m ready!</a>').click(function() {
+            $('.buttons').html('<div style="margin-top: -50px;" class="awesome-button" style="display: inline-block;"><label for="url">Send the following URL to your opponent<br></label><input id="url" type="text" value="' + URI(window.location.href).search('token='+token) + '"</span><br><br></div>');
+            var $readyBtn = $('<a href="#" class="button" style="color: #000; font-size: 200%;">I\'m ready!</a>').click(function() {
               setReady(token, "player1", true);
             });
             $('.buttons > div').append($readyBtn);
@@ -166,7 +166,7 @@
           </div>
           <div class="span3 offset6">
             
-            <p class="text-right"><a href="/index.php">HELLO</a> <a href="/upload.php"><b>GENERATE</b></a> <a href="/about.php">ABOUT</a> </p>
+            <p class="text-right"><a href="index.php">HELLO</a> <a href="upload.php"><b>GENERATE</b></a> <a href="about.php">ABOUT</a> </p>
             
           </div>
         </div>
